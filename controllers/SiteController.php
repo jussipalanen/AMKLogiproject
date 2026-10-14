@@ -100,7 +100,8 @@ class SiteController extends Controller
         $model = new LoginForm();
 
         if ($model->load($this->request->post()) && $model->login()) {
-            return $this->goBack(['user/view', 'username' => $model->getUser()->username]);
+            // Like the original: back to the page that required login, otherwise the front page.
+            return $this->goBack();
         }
 
         $model->password = '';

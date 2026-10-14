@@ -26,10 +26,27 @@ $identity = Yii::$app->user->identity;
                 <?php ActiveForm::end() ?>
                 <p class="mt-3 mb-0">Ei vielä tunnusta? <?= Html::a('Rekisteröidy', ['/site/signup']) ?></p>
             <?php else: ?>
-                <p class="mb-3">
-                    Hei, <?= Html::a(Html::encode($identity->username), ['/user/view', 'username' => $identity->username]) ?>!<br>
-                    Mitä haluat tehdä?
+                <?php $unread = $identity->getUnreadCommentCount() ?>
+                <p class="mb-2">
+                    Hei, <?= Html::a(Html::encode($identity->username), ['/user/view', 'username' => $identity->username]) ?>!
                 </p>
+                <p class="mb-2 amk-unread-summary">
+                    <?php if ($unread > 0): ?>
+                        Sinulla on
+                        <?= Html::a(
+                            Yii::$app->i18n->format(
+                                '{n, plural, =1{# uusi kommentti} other{# uutta kommenttia}}',
+                                ['n' => $unread],
+                                'fi-FI',
+                            ),
+                            ['/user/view', 'username' => $identity->username, '#' => 'comments'],
+                            ['class' => 'amk-unread'],
+                        ) ?>.
+                    <?php else: ?>
+                        Ei uusia kommentteja.
+                    <?php endif ?>
+                </p>
+                <p class="mb-3">Mitä haluat tehdä?</p>
                 <ul class="amk-actions">
                     <li><?= Html::a('Lisää kuva', ['/profile/update']) ?></li>
                     <li><?= Html::a('Muokkaa profiilia', ['/profile/update']) ?></li>

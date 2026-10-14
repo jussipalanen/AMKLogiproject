@@ -101,12 +101,17 @@ final class CommentCest
     {
         Factory::comment($this->_liisa, $this->_matti, 'Uusi kommentti');
 
+        Factory::comment($this->_liisa, $this->_matti, 'Toinen uusi');
+
         $I->amLoggedInAs($this->_matti);
         $I->amOnPage('/');
-        $I->see('1', '.badge');
+        $I->see('(2)', '.navbar .amk-unread');
+        $I->see('2 uutta kommenttia', '.amk-unread-summary');
 
         $I->amOnPage('/matti');
-        $I->dontSeeElement('.navbar .badge');
+        $I->dontSeeElement('.navbar .amk-unread');
+        $I->amOnPage('/');
+        $I->see('Ei uusia kommentteja.', '.amk-unread-summary');
         $I->assertNotNull(Comment::findOne(['body' => 'Uusi kommentti'])->read_at);
     }
 }

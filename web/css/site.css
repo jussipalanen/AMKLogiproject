@@ -99,9 +99,16 @@ a {
     padding-left: 0;
 }
 
-.amk-topbar .badge {
-    font-size: 0.65rem;
-    vertical-align: 1px;
+/* unread comment count, red as in the original menu */
+.amk-unread,
+.amk-topbar .nav-link.amk-unread {
+    color: #ff4040;
+    font-weight: 700;
+}
+
+.amk-topbar .nav-link.amk-unread:hover,
+.amk-topbar .nav-link.amk-unread:focus {
+    color: #ff8080;
 }
 
 .amk-topbar .nav-link.logout {

@@ -16,17 +16,25 @@ $unread = $identity?->getUnreadCommentCount() ?? 0;
 // Menu labels follow the original AMKLog menu (Etusivu, Oma, Selaa, ...).
 $items = [
     [
+        // New comments on your wall, shown first in red like "(1)" in the original menu.
+        'label' => '(' . $unread . ')',
+        'url' => ['/user/view', 'username' => $identity?->username, '#' => 'comments'],
+        'visible' => $unread > 0,
+        'linkOptions' => [
+            'class' => 'nav-link amk-unread',
+            'title' => Yii::$app->i18n->format(
+                '{n, plural, =1{# uusi kommentti} other{# uutta kommenttia}}',
+                ['n' => $unread],
+                'fi-FI',
+            ),
+        ],
+    ],
+    [
         'label' => 'Etusivu',
         'url' => ['/site/index'],
     ],
     [
-        'label' => 'Oma'
-            . ($unread > 0
-                ? ' ' . Html::tag('span', $unread, [
-                    'class' => 'badge rounded-pill text-bg-danger',
-                    'title' => 'Uusia kommentteja',
-                ])
-                : ''),
+        'label' => 'Oma',
         'url' => ['/user/view', 'username' => $identity?->username],
         'visible' => $identity !== null,
     ],

@@ -38,14 +38,28 @@ final class LoginFormCest
         $I->see('Väärä tunnus tai salasana.');
     }
 
-    public function loginSuccessfullyOpensOwnPage(FunctionalTester $I)
+    public function loginSuccessfullyOpensFrontPage(FunctionalTester $I)
     {
         $I->submitForm('#login-form', [
             'LoginForm[username]' => 'matti',
             'LoginForm[password]' => Factory::PASSWORD,
         ]);
         $I->see('Kirjaudu ulos (matti)');
-        $I->see('matti', 'h1');
+        $I->see('Tervetuloa AMKLogiin!', 'h1');
+        $I->see('Hei, matti!');
         $I->dontSeeElement('form#login-form');
+    }
+
+    public function unreadCommentCountIsShownAfterLogin(FunctionalTester $I)
+    {
+        $matti = \app\models\User::findByUsername('matti');
+        Factory::comment(Factory::user('liisa'), $matti, 'Moi!');
+
+        $I->submitForm('#login-form', [
+            'LoginForm[username]' => 'matti',
+            'LoginForm[password]' => Factory::PASSWORD,
+        ]);
+        $I->see('(1)', '.navbar .amk-unread');
+        $I->see('1 uusi kommentti', '.amk-unread-summary');
     }
 }
