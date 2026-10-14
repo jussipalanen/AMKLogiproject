@@ -1,0 +1,99 @@
+<?php
+
+declare(strict_types=1);
+
+namespace app\models;
+
+use Yii;
+use yii\base\Model;
+
+/**
+ * LoginForm is the model behind the login form.
+ *
+ * @property-read User|null $user
+ */
+class LoginForm extends Model
+{
+    public string $username = '';
+    public string $password = '';
+    public bool $rememberMe = true;
+    private User|null $_user = null;
+    private bool $_userLoaded = false;
+
+    /**
+     * @return array the validation rules.
+     */
+    public function rules(): array
+    {
+        return [
+            ['username', 'trim'],
+            // username and password are both required
+            [['username', 'password'], 'required'],
+            // rememberMe must be a boolean value
+            ['rememberMe', 'boolean'],
+            // password is validated by validatePassword()
+            ['password', 'validatePassword'],
+        ];
+    }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'username' => 'Tunnus',
+            'password' => 'Salasana',
+            'rememberMe' => 'Muista minut',
+        ];
+    }
+
+    /**
+     * Validates the password.
+     * This method serves as the inline validation for password.
+     *
+     * @param string $attribute the attribute currently being validated
+     * @param array|null $params the additional name-value pairs given in the rule
+     */
+    public function validatePassword(string $attribute, array|null $params): void
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+
+            if (!$user || !$user->validatePassword($this->password)) {
+                $this->addError($attribute, 'Väärä tunnus tai salasana.');
+            }
+        }
+    }
+
+    /**
+     * Logs in a user using the provided username and password.
+     * @return bool whether the user is logged in successfully
+     */
+    public function login(): bool
+    {
+        if (!$this->validate()) {
+            return false;
+        }
+
+        $user = $this->getUser();
+
+        if (!Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0)) {
+            return false;
+        }
+
+        $user->updateAttributes(['last_login_at' => time()]);
+
+        return true;
+    }
+
+    /**
+     * Finds user by [[username]]
+     */
+    public function getUser(): User|null
+    {
+        if (!$this->_userLoaded) {
+            $this->_user = User::findByUsername($this->username);
+            $this->_userLoaded = true;
+        }
+
+        return $this->_user;
+    }
+}

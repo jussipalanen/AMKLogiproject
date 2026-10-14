@@ -1,0 +1,775 @@
+/*
+ * AMKLogi theme – modern recreation of the original 2013 AMKLog look:
+ * dark striped page, thin grey top menu, blue striped banner, dark boxes with a
+ * blue top strip, left sidebar and a black footer bar.
+ */
+
+:root {
+    --amk-max-width: 960px;
+    --amk-gap: 20px;
+    --amk-sidebar-width: 270px;
+
+    --amk-page-bg: #161616;
+    --amk-page-stripe: rgba(255, 255, 255, 0.025);
+    --amk-topbar-bg: #2b2b2b;
+    --amk-topbar-border: #3a3a3a;
+    --amk-topbar-link: #b4b4b4;
+    --amk-box-bg: #232323;
+    --amk-box-border: #2f2f2f;
+    --amk-subnav-bg: #0e0e0e;
+    --amk-text: #dcdcdc;
+    --amk-muted: #9a9a9a;
+    --amk-heading: #ffffff;
+    --amk-link: #3aa9ff;
+    --amk-link-hover: #8fd0ff;
+    --amk-blue-light: #2b8fd6;
+    --amk-blue: #0d5c9c;
+    --amk-blue-dark: #083f6d;
+    /* private comments were #A229FF in the original */
+    --amk-private: #b675ff;
+
+    --amk-font: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
+    --amk-font-heading: Verdana, Tahoma, "Segoe UI", system-ui, sans-serif;
+    --amk-font-banner: Georgia, "Times New Roman", Times, serif;
+
+    --amk-strip: linear-gradient(to bottom, var(--amk-blue-light), var(--amk-blue) 55%, var(--amk-blue-dark));
+}
+
+/* Bootstrap dark theme tuned to the AMKLog palette */
+[data-bs-theme="dark"] {
+    --bs-body-bg: var(--amk-page-bg);
+    --bs-body-color: var(--amk-text);
+    --bs-body-font-family: var(--amk-font);
+    --bs-body-font-size: 0.8125rem;
+    --bs-secondary-color: var(--amk-muted);
+    --bs-link-color: var(--amk-link);
+    --bs-link-color-rgb: 58, 169, 255;
+    --bs-link-hover-color: var(--amk-link-hover);
+    --bs-link-hover-color-rgb: 143, 208, 255;
+    --bs-border-color: #444;
+    --bs-tertiary-bg: #1b1b1b;
+    --bs-primary: var(--amk-blue);
+    --bs-primary-rgb: 13, 92, 156;
+    /* flat 2013-style controls */
+    --bs-border-radius: 2px;
+    --bs-border-radius-sm: 2px;
+    --bs-border-radius-lg: 3px;
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--amk-page-bg);
+    background-image: repeating-linear-gradient(
+        135deg,
+        var(--amk-page-stripe) 0 2px,
+        transparent 2px 9px
+    );
+}
+
+a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ---- Top menu --------------------------------------------------------- */
+
+.amk-container,
+.amk-page {
+    width: min(100% - 24px, var(--amk-max-width));
+    margin-inline: auto;
+}
+
+.amk-topbar {
+    --bs-navbar-padding-y: 0;
+    --bs-navbar-color: var(--amk-topbar-link);
+    --bs-navbar-hover-color: #fff;
+    --bs-navbar-active-color: #fff;
+    --bs-navbar-nav-link-padding-x: 0.9rem;
+    background: linear-gradient(to bottom, #333, var(--amk-topbar-bg));
+    border-bottom: 1px solid var(--amk-topbar-border);
+    font-size: 0.75rem;
+}
+
+.amk-topbar .nav-link {
+    padding-block: 0.35rem;
+    text-decoration: none;
+}
+
+.amk-topbar .navbar-nav > .nav-item:first-child .nav-link {
+    padding-left: 0;
+}
+
+/* unread comment count, red as in the original menu */
+.amk-unread,
+.amk-topbar .nav-link.amk-unread {
+    color: #ff4040;
+    font-weight: 700;
+}
+
+.amk-icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+}
+
+.amk-topbar .nav-link.amk-unread:hover,
+.amk-topbar .nav-link.amk-unread:focus {
+    color: #ff8080;
+}
+
+.amk-topbar .nav-link.logout {
+    color: var(--bs-navbar-color);
+}
+
+.amk-topbar .nav-link.logout:hover,
+.amk-topbar .nav-link.logout:focus {
+    color: var(--bs-navbar-hover-color);
+}
+
+.amk-toggler {
+    margin-block: 0.35rem;
+    padding: 0.2rem 0.45rem;
+    border-color: var(--amk-topbar-border);
+    font-size: 0.9rem;
+}
+
+/* ---- Banner ----------------------------------------------------------- */
+
+.amk-banner {
+    position: relative;
+    margin-block: 16px var(--amk-gap);
+    padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 38px) clamp(32px, 5vw, 26px);
+    color: #fff;
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.06) 0 14px,
+            transparent 14px 34px
+        ),
+        linear-gradient(to bottom, #1167ad 0, var(--amk-blue) 55%, var(--amk-blue-dark) 56%, #0a4a80 100%);
+    border: 1px solid #0a3a63;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.amk-banner-title {
+    display: inline-block;
+    font-family: var(--amk-font-banner);
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    line-height: 1.1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.amk-banner-title:hover,
+.amk-banner-title:focus {
+    color: #fff;
+}
+
+.amk-banner-subtitle {
+    margin: 0.25rem 0 0;
+    font-family: var(--amk-font-banner);
+    font-size: clamp(1rem, 2.6vw, 1.3rem);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.amk-banner-version {
+    position: absolute;
+    right: clamp(10px, 2vw, 16px);
+    bottom: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- Columns ---------------------------------------------------------- */
+
+.amk-columns {
+    display: grid;
+    grid-template-columns: var(--amk-sidebar-width) minmax(0, 1fr);
+    gap: var(--amk-gap);
+    align-items: start;
+}
+
+.amk-sidebar,
+.amk-main {
+    display: grid;
+    gap: var(--amk-gap);
+    min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+    .amk-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---- Boxes ------------------------------------------------------------ */
+
+.amk-box {
+    background: var(--amk-box-bg);
+    border: 1px solid var(--amk-box-border);
+    border-top: 0;
+}
+
+.amk-box::before {
+    content: "";
+    display: block;
+    height: 12px;
+    background: var(--amk-strip);
+    border-bottom: 1px solid #000;
+}
+
+.amk-box-body {
+    padding: 14px clamp(12px, 3vw, 16px) 16px;
+}
+
+.amk-box-title {
+    margin: 0 0 0.75rem;
+    font-family: var(--amk-font-heading);
+    font-size: clamp(1.2rem, 3.5vw, 1.35rem);
+    font-weight: 700;
+    color: var(--amk-heading);
+}
+
+.amk-box h2:not(.amk-box-title),
+.amk-section-title {
+    margin: 1.25rem 0 0.6rem;
+    font-family: var(--amk-font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--amk-heading);
+}
+
+.amk-box p {
+    line-height: 1.75;
+}
+
+.amk-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    padding: 0.55rem clamp(12px, 3vw, 16px);
+    margin: 0;
+    list-style: none;
+    background: var(--amk-subnav-bg);
+    font-size: 0.75rem;
+}
+
+.amk-subnav a[aria-current="page"] {
+    color: #fff;
+}
+
+/* "Etunimi: Jussi" style detail lists */
+.amk-facts {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.7;
+}
+
+.amk-facts div {
+    display: flex;
+    gap: 0.3em;
+    min-width: 0;
+}
+
+.amk-facts dt {
+    font-weight: normal;
+}
+
+.amk-facts dt::after {
+    content: ":";
+}
+
+.amk-facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.amk-actions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    line-height: 1.7;
+}
+
+.amk-actions a::before {
+    content: "» ";
+}
+
+.amk-list {
+    margin: 0;
+    padding-left: 1.4rem;
+    line-height: 1.7;
+}
+
+.amk-empty {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+/* ---- Avatars ---------------------------------------------------------- */
+
+.amk-avatar {
+    flex-shrink: 0;
+    object-fit: cover;
+    background: #d3d9dc;
+    border: 1px solid #000;
+}
+
+.amk-portrait {
+    display: block;
+    width: min(100%, 430px, 80vw);
+    aspect-ratio: 3 / 4;
+    margin: 0.5rem auto 1.25rem;
+    object-fit: cover;
+    background: #d3d9dc;
+    border: 1px solid #000;
+}
+
+.amk-user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 10px;
+}
+
+.amk-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px;
+    background: #1b1b1b;
+    border: 1px solid var(--amk-box-border);
+    color: var(--amk-text);
+    text-decoration: none;
+}
+
+.amk-user-card:hover,
+.amk-user-card:focus-visible {
+    border-color: var(--amk-blue-light);
+    color: #fff;
+}
+
+.amk-user-card strong {
+    display: block;
+    color: var(--amk-link);
+}
+
+.amk-newest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ---- Comments --------------------------------------------------------- */
+
+.comment-list {
+    position: relative; /* offsetTop of comments is measured from the list */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 36rem;
+    overflow-y: auto;
+}
+
+.comment {
+    display: flex;
+    gap: 10px;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.comment:last-child {
+    border-bottom: 0;
+}
+
+.comment-meta {
+    font-size: 0.75rem;
+    color: var(--amk-muted);
+}
+
+.comment-meta a {
+    font-weight: 700;
+}
+
+.comment-body {
+    margin: 0.15rem 0 0;
+    line-height: 1.6 !important;
+    overflow-wrap: anywhere;
+}
+
+.comment-private .comment-body {
+    color: var(--amk-private);
+}
+
+.comment-new {
+    background: linear-gradient(to right, rgba(255, 64, 64, 0.1), transparent 70%);
+    box-shadow: inset 3px 0 0 #ff4040;
+    padding-left: 8px;
+}
+
+.amk-new-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    margin-left: 0.4rem;
+    padding: 1px 6px;
+    background: #d62828;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+.comment-private-label {
+    margin-left: 0.4rem;
+    color: var(--amk-private);
+}
+
+/* deleting comments */
+.amk-comment-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.25rem;
+    background: var(--amk-subnav-bg);
+    font-size: 0.75rem;
+}
+
+.amk-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.amk-comment-tools .btn {
+    --bs-btn-padding-y: 0.15rem;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-font-size: 0.75rem;
+}
+
+.amk-comment-select {
+    flex-shrink: 0;
+    margin-top: 0.75rem;
+    cursor: pointer;
+}
+
+.comment-selected {
+    background: rgba(43, 143, 214, 0.12);
+}
+
+.amk-delete-btn {
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding: 0.15rem 0.35rem;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--amk-muted);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.amk-delete-btn:hover,
+.amk-delete-btn:focus-visible {
+    color: #ff6b6b;
+    border-color: #5a2a2a;
+}
+
+.amk-delete-status {
+    margin: 0 0 0.5rem;
+    color: var(--amk-muted);
+}
+
+.amk-comment-form {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #333;
+}
+
+/* ---- Forms and buttons ------------------------------------------------ */
+
+.amk-box .form-control,
+.amk-box .form-select {
+    padding: 0.3rem 0.5rem;
+    background-color: #161616;
+    border-color: #444;
+    font-size: 0.8125rem;
+}
+
+.amk-box .form-control:focus,
+.amk-box .form-select:focus {
+    border-color: var(--amk-blue-light);
+    box-shadow: 0 0 0 0.2rem rgba(43, 143, 214, 0.3);
+}
+
+.amk-box .form-label,
+.amk-box .col-form-label {
+    font-size: 0.75rem;
+    color: var(--amk-text);
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--amk-blue);
+    --bs-btn-border-color: var(--amk-blue-dark);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #1170bd;
+    --bs-btn-hover-border-color: var(--amk-blue-dark);
+    --bs-btn-active-bg: var(--amk-blue-dark);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent);
+    font-size: 0.8125rem;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--amk-link);
+    --bs-btn-border-color: var(--amk-blue-light);
+    --bs-btn-hover-bg: var(--amk-blue);
+    --bs-btn-hover-border-color: var(--amk-blue-light);
+    font-size: 0.8125rem;
+}
+
+.hint-block,
+.form-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    color: var(--amk-muted);
+}
+
+.error-summary {
+    color: var(--bs-danger-text-emphasis);
+    background: var(--bs-danger-bg-subtle);
+    border-left: 3px solid var(--bs-danger-border-subtle);
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+/* captcha image is drawn dark-on-transparent */
+.amk-box img[src*="captcha"] {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+.amk-alert {
+    margin-bottom: var(--amk-gap);
+    border-radius: 0;
+}
+
+.pagination {
+    --bs-pagination-bg: var(--amk-box-bg);
+    --bs-pagination-active-bg: var(--amk-blue);
+    --bs-pagination-active-border-color: var(--amk-blue-light);
+    margin: 1rem 0 0;
+}
+
+/* ---- Footer ----------------------------------------------------------- */
+
+.amk-footer {
+    margin-block: var(--amk-gap) 24px;
+    padding: 24px 12px;
+    background: #000;
+    color: #fff;
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.amk-footer a {
+    color: #fff;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+/* single forms (login, registration) stay readable on wide screens */
+.amk-narrow {
+    width: min(100%, 480px);
+}
+
+/* ---- Albums ----------------------------------------------------------- */
+
+.amk-album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+    gap: 12px;
+}
+
+.amk-album-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    padding: 8px;
+    background: #1b1b1b;
+    border: 1px solid var(--amk-box-border);
+    color: var(--amk-text);
+    text-decoration: none;
+}
+
+.amk-album-card:hover,
+.amk-album-card:focus-visible {
+    border-color: var(--amk-blue-light);
+    color: #fff;
+}
+
+.amk-album-card strong {
+    overflow: hidden;
+    color: var(--amk-link);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.amk-album-cover {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 4px;
+    overflow: hidden;
+    background: #2c2c2c;
+    border: 1px solid #000;
+    color: #555;
+    font-size: 2.5rem;
+}
+
+.amk-album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.amk-album-meta {
+    font-size: 0.7rem;
+    color: var(--amk-muted);
+}
+
+.amk-private-tag {
+    color: #e0b64a;
+    white-space: nowrap;
+}
+
+.amk-image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.amk-image-tile {
+    position: relative;
+    min-width: 0;
+}
+
+.amk-image-tile a {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #2c2c2c;
+    border: 1px solid #000;
+}
+
+.amk-image-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.amk-image-tile a:hover img,
+.amk-image-tile a:focus-visible img {
+    transform: scale(1.04);
+}
+
+.amk-image-select {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 1.2em;
+    height: 1.2em;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+}
+
+.amk-image-tile.is-selected a {
+    outline: 3px solid var(--amk-blue-light);
+    outline-offset: -3px;
+}
+
+.amk-image-caption {
+    display: block;
+    margin-top: 3px;
+    overflow: hidden;
+    font-size: 0.7rem;
+    color: var(--amk-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.amk-figure {
+    margin: 0 0 0.75rem;
+    text-align: center;
+}
+
+.amk-figure-img {
+    max-width: 100%;
+    max-height: 75vh;
+    background: #000;
+    border: 1px solid #000;
+}
+
+.amk-figure figcaption {
+    margin-top: 0.5rem;
+    color: var(--amk-text);
+}
+
+.amk-pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.amk-pager a[rel="next"] {
+    justify-self: end;
+}
+
+.amk-image-tools {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #333;
+}
+
+.amk-inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.amk-inline-form .form-control,
+.amk-inline-form .form-select {
+    flex: 1 1 12rem;
+    width: auto;
+}
+
+.amk-upload-list {
+    margin: 0 0 1rem;
+    padding-left: 1.2rem;
+    color: var(--amk-muted);
+}
+
+.amk-upload-list .is-invalid {
+    color: #ff6b6b;
+}

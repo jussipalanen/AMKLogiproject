@@ -1,0 +1,17 @@
+# No directory listings: upload folders must not reveal file names (private albums).
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+RewriteEngine on
+
+# Uploaded files are data, never code (uploads are also validated as images).
+RewriteRule ^uploads/.*\.(?:php\d*|phtml|phar|pl|py|cgi|sh)$ - [F,NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]

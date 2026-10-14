@@ -1,0 +1,21 @@
+# Live development override, used by `./dev live`:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#
+# The project folder is mounted into the container, so saved changes show up on the
+# next page load without rebuilding. Runs Yii in dev mode (debug toolbar, Gii).
+services:
+  app:
+    build:
+      target: dev
+    image: amklogi:dev
+    environment:
+      YII_ENV: dev
+      YII_DEBUG: "1"
+      # Apache runs as your user so files it writes (assets, logs) stay editable.
+      PHP_USER_ID: ${HOST_UID:-1000}
+      DEV_ALLOWED_IPS: 127.0.0.1,::1,172.16.0.0/12
+    volumes:
+      - ./:/app
+      # Keep the image's vendor/ (with dev dependencies) instead of the host's.
+      - /app/vendor

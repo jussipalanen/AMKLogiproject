@@ -1,0 +1,73 @@
+# AMKLogi: app (PHP 8.5 + Apache), MySQL 8.4 and Mailpit for outgoing mail.
+#
+#   docker compose up -d --build                     -> http://localhost:8080
+#   docker compose --profile test run --rm tests     -> run the test suite
+#
+# Settings can be overridden in a .env file (see .env.example).
+name: amklogi
+
+services:
+  app:
+    build:
+      context: .
+      target: app
+    image: amklogi:latest
+    ports:
+      # Only this machine by default; set APP_BIND=0.0.0.0 to expose it (e.g. behind a proxy).
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8080}:80"
+    environment:
+      YII_ENV: ${YII_ENV:-prod}
+      YII_DEBUG: ${YII_DEBUG:-0}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Europe/Helsinki}
+      DB_DSN: mysql:host=db;port=3306;dbname=${DB_DATABASE:-amklogi}
+      DB_USERNAME: ${DB_USERNAME:-amklogi}
+      DB_PASSWORD: ${DB_PASSWORD:-amklogi}
+      MAILER_DSN: smtp://mailpit:1025
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@amklogi.test}
+      SENDER_EMAIL: ${SENDER_EMAIL:-noreply@amklogi.test}
+      COOKIE_VALIDATION_KEY: ${COOKIE_VALIDATION_KEY:-}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    volumes:
+      - runtime:/app/runtime
+      - uploads:/app/web/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-amklogi}
+      MYSQL_USER: ${DB_USERNAME:-amklogi}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-amklogi}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-amklogi-root}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.31
+    ports:
+      - "${MAILPIT_BIND:-127.0.0.1}:${MAILPIT_PORT:-8025}:8025"
+    restart: unless-stopped
+
+  tests:
+    build:
+      context: .
+      target: test
+    profiles: ["test"]
+
+volumes:
+  db-data:
+  runtime:
+  uploads:
