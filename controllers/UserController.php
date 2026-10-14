@@ -41,14 +41,19 @@ class UserController extends Controller
         /** @var User|null $viewer */
         $viewer = Yii::$app->user->identity;
 
-        // Visiting your own wall marks new comments as read (and clears the menu badge).
+        // Visiting your own wall marks new comments as read (and clears the menu count);
+        // remember which ones were new so they can still be highlighted on this visit.
+        $newCommentIds = [];
+
         if ($viewer?->id === $user->id) {
+            $newCommentIds = $user->getReceivedComments()->unread()->select('id')->column();
             $viewer->markCommentsRead();
         }
 
         return $this->render('view', [
             'user' => $user,
             'comments' => self::wallComments($user, $viewer),
+            'newCommentIds' => array_map('intval', $newCommentIds),
             'newComment' => new Comment(),
         ]);
     }

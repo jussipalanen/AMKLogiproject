@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 /** @var yii\web\View $this */
 
+use app\helpers\Icon;
 use app\models\User;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
@@ -17,7 +18,7 @@ $unread = $identity?->getUnreadCommentCount() ?? 0;
 $items = [
     [
         // New comments on your wall, shown first in red like "(1)" in the original menu.
-        'label' => '(' . $unread . ')',
+        'label' => Icon::comment() . ' (' . $unread . ')',
         'url' => ['/user/view', 'username' => $identity?->username, '#' => 'comments'],
         'visible' => $unread > 0,
         'linkOptions' => [

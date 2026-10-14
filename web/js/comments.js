@@ -6,9 +6,18 @@
 (() => {
     'use strict'
 
+    // The comment list scrolls inside its box: show the first new comment, or the latest one.
+    const scrollComments = list => {
+        const ul = list?.querySelector('.comment-list')
+        if (!ul) return
+        const firstNew = ul.querySelector('.comment-new')
+        ul.scrollTop = firstNew ? firstNew.offsetTop : ul.scrollHeight
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('[data-comment-form]')
         const list = document.querySelector('[data-comment-list]')
+        scrollComments(list)
         if (!form || !list) return
 
         const status = form.querySelector('[data-comment-status]')
@@ -62,7 +71,7 @@
                 list.innerHTML = data.html
                 form.reset()
                 showStatus('')
-                list.querySelector('.comment:last-child')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+                scrollComments(list)
             } catch (error) {
                 showStatus(error.message)
             } finally {

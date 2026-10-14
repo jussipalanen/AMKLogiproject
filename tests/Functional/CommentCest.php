@@ -110,6 +110,10 @@ final class CommentCest
 
         $I->amOnPage('/matti');
         $I->dontSeeElement('.navbar .amk-unread');
+        // still highlighted on the visit that marked them read, not afterwards
+        $I->seeNumberOfElements('.comment-new .amk-new-badge', 2);
+        $I->amOnPage('/matti');
+        $I->dontSeeElement('.comment-new');
         $I->amOnPage('/');
         $I->see('Ei uusia kommentteja.', '.amk-unread-summary');
         $I->assertNotNull(Comment::findOne(['body' => 'Uusi kommentti'])->read_at);

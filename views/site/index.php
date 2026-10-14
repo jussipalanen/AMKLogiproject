@@ -5,6 +5,7 @@ declare(strict_types=1);
 /** @var yii\web\View $this */
 /** @var app\models\User[] $newestUsers */
 
+use app\helpers\Icon;
 use app\models\LoginForm;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
@@ -32,7 +33,7 @@ $identity = Yii::$app->user->identity;
                 </p>
                 <p class="mb-2 amk-unread-summary">
                     <?php if ($unread > 0): ?>
-                        Sinulla on
+                        <?= Icon::comment() ?> Sinulla on
                         <?= Html::a(
                             Yii::$app->i18n->format(
                                 '{n, plural, =1{# uusi kommentti} other{# uutta kommenttia}}',

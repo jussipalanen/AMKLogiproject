@@ -5,6 +5,7 @@ declare(strict_types=1);
 /** @var yii\web\View $this */
 /** @var app\models\User $user */
 /** @var app\models\Comment[] $comments */
+/** @var int[] $newCommentIds */
 /** @var app\models\Comment $newComment */
 
 use app\assets\AppAsset;
@@ -88,7 +89,7 @@ $details = array_filter([
             <h2 id="comments-title">Kommentit</h2>
 
             <div data-comment-list>
-                <?= $this->render('_comments', ['comments' => $comments]) ?>
+                <?= $this->render('_comments', ['comments' => $comments, 'newCommentIds' => $newCommentIds]) ?>
             </div>
 
             <div class="amk-comment-form">

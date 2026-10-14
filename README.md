@@ -48,7 +48,7 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 | Profiilikuva | JPG, PNG, GIF tai WebP, enintään 5 Mt. Kuva pienennetään (max 600 px) ja tallennetaan JPEG-muodossa. |
 | Kommenttiseinä | Julkiset ja yksityiset kommentit. Enter lähettää ja Shift + Enter tekee rivinvaihdon. Lähetys toimii ilman sivun uudelleenlatausta, ja myös ilman JavaScriptiä. |
 | Yksityiset kommentit | Näkyvät vain kirjoittajalle, seinän omistajalle ja ylläpitäjälle (`admin`-rooli). |
-| Uusien kommenttien ilmoitus | Uusien kommenttien määrä näkyy punaisena valikon vasemmassa reunassa, esim. **(1)**, sekä etusivun Kirjautuminen-laatikossa. Määrä nollautuu, kun käyttäjä avaa oman sivunsa. |
+| Uusien kommenttien ilmoitus | Uusien kommenttien määrä näkyy punaisena puhekuplakuvakkeen kanssa valikon vasemmassa reunassa, esim. **(1)**, sekä etusivun Kirjautuminen-laatikossa. Omalla seinällä uudet kommentit on merkitty **UUSI**-merkillä, ja määrä nollautuu. |
 | Käyttäjälista | Kaikki käyttäjät sivutettuna. |
 | Yhteydenottolomake | Lähettää sähköpostin ylläpidolle. CAPTCHA on käytössä, kun GD tai Imagick on asennettu. |
 | Käyttöliittymä | Suomenkielinen. Alkuperäisen AMKLog-ulkoasun mukainen tumma teema (sininen raidallinen banneri, laatikot sivupalkissa), toteutettu modernilla CSS:llä ja responsiivisena puhelimille. |
