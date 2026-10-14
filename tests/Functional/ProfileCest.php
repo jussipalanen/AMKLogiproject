@@ -29,7 +29,8 @@ final class ProfileCest
             'Profile[firstname]' => 'Liisa',
             'Profile[surname]' => 'Laaksonen',
             'Profile[gender]' => 'female',
-            'Profile[city]' => '<b>Kotka</b>',
+            'Profile[city]' => 'Kotka',
+            'Profile[skype]' => '<b>liisa</b>',
             'Profile[homepage]' => 'https://example.com',
         ]);
         $I->see('Profiili tallennettu.');
@@ -38,8 +39,19 @@ final class ProfileCest
         $I->see('Liisa', '.profile-details');
         $I->see('Laaksonen', '.profile-details');
         $I->see('Nainen');
-        $I->see('<b>Kotka</b>');
+        $I->see('Kotka', '.profile-details');
+        $I->see('<b>liisa</b>');
         $I->seeLink('https://example.com', 'https://example.com');
+    }
+
+    public function cityMustComeFromTheList(FunctionalTester $I)
+    {
+        $I->amLoggedInAs(Factory::user('liisa'));
+        $I->amOnRoute('profile/update');
+        $I->seeElement('select#profile-city option[value="Joensuu"]');
+        $I->seeElement('select#profile-city option[value="Maarianhamina"]');
+        $I->submitForm('#profile-form', ['Profile[city]' => 'Atlantis']);
+        $I->see('Valitse kaupunki listalta.');
     }
 
     public function javascriptHomepageIsRejected(FunctionalTester $I)

@@ -59,7 +59,9 @@ $this->title = 'Muokkaa profiilia';
                     <?= $form->field($profile, 'gender')->dropDownList(Profile::GENDERS, ['prompt' => '–']) ?>
                 </div>
                 <div class="col-sm-6"><?= $form->field($profile, 'birthday')->input('date') ?></div>
-                <div class="col-sm-6"><?= $form->field($profile, 'city') ?></div>
+                <div class="col-sm-6">
+                    <?= $form->field($profile, 'city')->dropDownList($profile->cityOptions(), ['prompt' => '–']) ?>
+                </div>
                 <div class="col-sm-6"><?= $form->field($profile, 'email')->input('email') ?></div>
                 <div class="col-sm-6"><?= $form->field($profile, 'skype') ?></div>
                 <div class="col-12">

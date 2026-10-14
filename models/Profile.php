@@ -46,6 +46,35 @@ class Profile extends ActiveRecord
         return '{{%profile}}';
     }
 
+    /**
+     * Cities for the "Kaupunki" dropdown (config/cities.php).
+     *
+     * @return string[]
+     */
+    public static function cities(): array
+    {
+        static $cities = null;
+
+        return $cities ??= require Yii::getAlias('@app/config/cities.php');
+    }
+
+    /**
+     * Dropdown options; a saved city that is not on the list (older data) stays selectable.
+     *
+     * @return array<string, string>
+     */
+    public function cityOptions(): array
+    {
+        $cities = self::cities();
+        $saved = $this->getOldAttribute('city');
+
+        if (is_string($saved) && $saved !== '' && !in_array($saved, $cities, true)) {
+            $cities[] = $saved;
+        }
+
+        return array_combine($cities, $cities);
+    }
+
     public function behaviors(): array
     {
         return [
@@ -67,7 +96,14 @@ class Profile extends ActiveRecord
             ['birthday', 'date', 'format' => 'php:Y-m-d', 'max' => date('Y-m-d'), 'tooBig' => 'Syntymäaika ei voi olla tulevaisuudessa.'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['city', 'string', 'max' => 100],
+            [
+                'city',
+                'in',
+                'range' => static fn (): array => self::cities(),
+                'message' => 'Valitse kaupunki listalta.',
+                // older free-text values can be kept when saving other fields
+                'when' => static fn (self $model): bool => $model->city !== $model->getOldAttribute('city'),
+            ],
             // Only http(s) links, so the homepage can be rendered as a link safely.
             ['homepage', 'url', 'validSchemes' => ['http', 'https'], 'defaultScheme' => 'https'],
             ['homepage', 'string', 'max' => 255],

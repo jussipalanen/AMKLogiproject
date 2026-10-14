@@ -44,7 +44,7 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 | Rekisteröityminen | Tunnus, sähköposti ja salasana kahteen kertaan. Tunnus on uniikki kirjainkoosta riippumatta, eikä se voi olla sovelluksen varattu polku (esim. `login`). |
 | Kirjautuminen | Tunnus ja salasana, "Muista minut" -eväste. Salasanat tallennetaan bcrypt-tiivisteinä. |
 | Profiilisivu | Osoitteessa `/<tunnus>`, kuten alkuperäisessä sovelluksessa. Näyttää profiilikuvan ja täytetyt tiedot. |
-| Profiilin muokkaus | Nimi, sukupuoli, syntymäpäivä, kaupunki, sähköposti, kotisivu ja Skype. Tämä puuttui alkuperäisestä versiosta. |
+| Profiilin muokkaus | Nimi, sukupuoli ja kaupunki (pudotusvalikot, kaupunkeina Suomen 108 kaupunkia tiedostosta `config/cities.php`), syntymäpäivä, sähköposti, kotisivu ja Skype. Tämä puuttui alkuperäisestä versiosta. |
 | Profiilikuva | JPG, PNG, GIF tai WebP, enintään 5 Mt. Kuva pienennetään (max 600 px) ja tallennetaan JPEG-muodossa. |
 | Kommenttiseinä | Julkiset ja yksityiset kommentit. Enter lähettää ja Shift + Enter tekee rivinvaihdon. Lähetys toimii ilman sivun uudelleenlatausta, ja myös ilman JavaScriptiä. |
 | Kommenttien poisto | Seinän omistaja voi poistaa kommentteja yksitellen, valitut (valintaruudut ja "Valitse kaikki") tai kaikki kerralla. Kommentin kirjoittaja voi poistaa oman kommenttinsa. Jokainen poisto kysyy varmistuksen. |
