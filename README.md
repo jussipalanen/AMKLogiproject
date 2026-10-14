@@ -47,6 +47,7 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 | Profiilin muokkaus | Nimi, sukupuoli, syntymäpäivä, paikkakunta, parisuhde, sähköposti, kotisivu ja Skype. Tämä puuttui alkuperäisestä versiosta. |
 | Profiilikuva | JPG, PNG, GIF tai WebP, enintään 5 Mt. Kuva pienennetään (max 600 px) ja tallennetaan JPEG-muodossa. |
 | Kommenttiseinä | Julkiset ja yksityiset kommentit. Enter lähettää ja Shift + Enter tekee rivinvaihdon. Lähetys toimii ilman sivun uudelleenlatausta, ja myös ilman JavaScriptiä. |
+| Kommenttien poisto | Seinän omistaja voi poistaa kommentteja yksitellen, valitut (valintaruudut ja "Valitse kaikki") tai kaikki kerralla. Kommentin kirjoittaja voi poistaa oman kommenttinsa. Jokainen poisto kysyy varmistuksen. |
 | Yksityiset kommentit | Näkyvät vain kirjoittajalle, seinän omistajalle ja ylläpitäjälle (`admin`-rooli). |
 | Uusien kommenttien ilmoitus | Uusien kommenttien määrä näkyy punaisena puhekuplakuvakkeen kanssa valikon vasemmassa reunassa, esim. **(1)**, sekä etusivun Kirjautuminen-laatikossa. Omalla seinällä uudet kommentit on merkitty **UUSI**-merkillä, ja määrä nollautuu. |
 | Käyttäjälista | Kaikki käyttäjät sivutettuna. |
@@ -190,6 +191,7 @@ Testit kattavat muun muassa:
 - kirjainkoosta riippumattoman tunnusten yksilöllisyyden ja varatut tunnukset
 - yksityisten kommenttien näkyvyyden vieraalle, muille käyttäjille, omistajalle, kirjoittajalle ja ylläpitäjälle
 - sen, ettei kommentin kirjoittajaa voi väärentää pyynnöllä
+- kommenttien poiston oikeudet: omistaja, kirjoittaja, ylläpitäjä ja muut käyttäjät, sekä sen, että monen kommentin poisto joko onnistuu kokonaan tai ei poista mitään
 - HTML:n escapeoinnin (XSS) kommenteissa ja profiilissa
 - `javascript:`-kotisivulinkkien hylkäämisen ja profiilikuvan tiedostotyypin tarkistuksen
 - uusien kommenttien ilmoituksen nollautumisen
@@ -272,7 +274,7 @@ Alkuperäinen Yii 1.1 -koodi löytyy `master`-haarasta.
 - **Kuva-albumi:** alkuperäisessä versiossa oli vain tyhjä `album`-sivu ja käyttämätön `images`-taulu,
   joten niitä ei siirretty.
 - **Kurssit ja ryhmät:** alkuperäisen valikon linkit eivät johtaneet mihinkään, joten ne on jätetty pois.
-- **Salasanan palautus sähköpostilla** ja **kommenttien poisto** ovat luontevia seuraavia ominaisuuksia.
+- **Salasanan palautus sähköpostilla** on luonteva seuraava ominaisuus.
 
 </details>
 

@@ -88,8 +88,22 @@ $details = array_filter([
         <section id="comments" aria-labelledby="comments-title">
             <h2 id="comments-title">Kommentit</h2>
 
+            <?php if (!Yii::$app->user->isGuest): ?>
+                <?= Html::beginForm(
+                    ['/comment/delete', 'username' => $user->username],
+                    'post',
+                    ['id' => 'comment-delete-form', 'data-comment-delete-form' => true],
+                ) ?>
+                <?= Html::endForm() ?>
+                <p class="small amk-delete-status" data-delete-status role="status" hidden></p>
+            <?php endif ?>
+
             <div data-comment-list>
-                <?= $this->render('_comments', ['comments' => $comments, 'newCommentIds' => $newCommentIds]) ?>
+                <?= $this->render('_comments', [
+                    'owner' => $user,
+                    'comments' => $comments,
+                    'newCommentIds' => $newCommentIds,
+                ]) ?>
             </div>
 
             <div class="amk-comment-form">

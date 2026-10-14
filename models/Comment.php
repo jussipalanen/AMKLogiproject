@@ -68,6 +68,15 @@ class Comment extends ActiveRecord
         ];
     }
 
+    /**
+     * The wall owner and admins can delete any comment on the wall; authors their own.
+     */
+    public function canBeDeletedBy(?User $user): bool
+    {
+        return $user !== null
+            && ($user->isAdmin() || $user->id === $this->recipient_id || $user->id === $this->author_id);
+    }
+
     public function getAuthor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'author_id']);

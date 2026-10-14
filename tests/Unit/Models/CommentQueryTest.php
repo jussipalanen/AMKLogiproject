@@ -70,6 +70,24 @@ final class CommentQueryTest extends \Codeception\Test\Unit
         verify($comment->is_private)->true();
     }
 
+    public function testDeletePermissions(): void
+    {
+        $comment = Comment::findOne(['body' => 'julkinen']);
+        $admin = Factory::user('ylläpito', User::ROLE_ADMIN);
+        $other = Factory::user('pekka');
+
+        verify($comment->canBeDeletedBy($this->_owner))->true();
+        verify($comment->canBeDeletedBy($this->_author))->true();
+        verify($comment->canBeDeletedBy($admin))->true();
+        verify($comment->canBeDeletedBy($other))->false();
+        verify($comment->canBeDeletedBy(null))->false();
+
+        verify($this->_owner->canManageWall($this->_owner))->true();
+        verify($this->_owner->canManageWall($admin))->true();
+        verify($this->_owner->canManageWall($this->_author))->false();
+        verify($this->_owner->canManageWall(null))->false();
+    }
+
     public function testEmptyAndTooLongCommentsAreRejected(): void
     {
         verify((new Comment(['body' => '   ']))->validate())->false();

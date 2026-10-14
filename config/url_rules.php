@@ -16,6 +16,7 @@ return [
     'users' => 'user/index',
     'profile' => 'profile/update',
     'profile/avatar' => 'profile/avatar',
+    'POST <username:[A-Za-z0-9_-]+>/comments/delete' => 'comment/delete',
     'POST <username:[A-Za-z0-9_-]+>/comments' => 'comment/create',
     'gii' => 'gii',
     'debug' => 'debug',

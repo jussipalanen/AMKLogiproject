@@ -116,6 +116,14 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->role === self::ROLE_ADMIN;
     }
 
+    /**
+     * Whether $user may bulk-delete comments on this user's wall (the owner or an admin).
+     */
+    public function canManageWall(?User $user): bool
+    {
+        return $user !== null && ($user->isAdmin() || $user->id === $this->id);
+    }
+
     public function getProfile(): ActiveQuery
     {
         return $this->hasOne(Profile::class, ['user_id' => 'id']);

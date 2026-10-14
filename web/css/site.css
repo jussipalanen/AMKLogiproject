@@ -431,6 +431,64 @@ a {
     color: var(--amk-private);
 }
 
+/* deleting comments */
+.amk-comment-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.25rem;
+    background: var(--amk-subnav-bg);
+    font-size: 0.75rem;
+}
+
+.amk-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.amk-comment-tools .btn {
+    --bs-btn-padding-y: 0.15rem;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-font-size: 0.75rem;
+}
+
+.amk-comment-select {
+    flex-shrink: 0;
+    margin-top: 0.75rem;
+    cursor: pointer;
+}
+
+.comment-selected {
+    background: rgba(43, 143, 214, 0.12);
+}
+
+.amk-delete-btn {
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding: 0.15rem 0.35rem;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--amk-muted);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.amk-delete-btn:hover,
+.amk-delete-btn:focus-visible {
+    color: #ff6b6b;
+    border-color: #5a2a2a;
+}
+
+.amk-delete-status {
+    margin: 0 0 0.5rem;
+    color: var(--amk-muted);
+}
+
 .amk-comment-form {
     margin-top: 1rem;
     padding-top: 1rem;
