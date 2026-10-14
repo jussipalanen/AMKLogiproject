@@ -60,7 +60,6 @@ $this->title = 'Muokkaa profiilia';
                 </div>
                 <div class="col-sm-6"><?= $form->field($profile, 'birthday')->input('date') ?></div>
                 <div class="col-sm-6"><?= $form->field($profile, 'city') ?></div>
-                <div class="col-sm-6"><?= $form->field($profile, 'relationship') ?></div>
                 <div class="col-sm-6"><?= $form->field($profile, 'email')->input('email') ?></div>
                 <div class="col-sm-6"><?= $form->field($profile, 'skype') ?></div>
                 <div class="col-12">

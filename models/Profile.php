@@ -22,7 +22,6 @@ use yii\helpers\FileHelper;
  * @property string|null $birthday
  * @property string|null $email
  * @property string|null $city
- * @property string|null $relationship
  * @property string|null $homepage
  * @property string|null $skype
  * @property string|null $avatar_path
@@ -57,9 +56,9 @@ class Profile extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['firstname', 'surname', 'email', 'city', 'relationship', 'homepage', 'skype'], 'trim'],
+            [['firstname', 'surname', 'email', 'city', 'homepage', 'skype'], 'trim'],
             [
-                ['firstname', 'surname', 'gender', 'birthday', 'email', 'city', 'relationship', 'homepage', 'skype'],
+                ['firstname', 'surname', 'gender', 'birthday', 'email', 'city', 'homepage', 'skype'],
                 'default',
                 'value' => null,
             ],
@@ -69,7 +68,6 @@ class Profile extends ActiveRecord
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['city', 'string', 'max' => 100],
-            ['relationship', 'string', 'max' => 30],
             // Only http(s) links, so the homepage can be rendered as a link safely.
             ['homepage', 'url', 'validSchemes' => ['http', 'https'], 'defaultScheme' => 'https'],
             ['homepage', 'string', 'max' => 255],
@@ -86,7 +84,6 @@ class Profile extends ActiveRecord
             'birthday' => 'Syntymäaika',
             'email' => 'Julkinen sähköposti',
             'city' => 'Kaupunki',
-            'relationship' => 'Parisuhdetilanne',
             'homepage' => 'Kotisivu',
             'skype' => 'Skype',
         ];

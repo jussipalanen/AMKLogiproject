@@ -27,7 +27,6 @@ $details = array_filter([
     'Syntymäaika' => $profile->birthday === null ? null : Yii::$app->formatter->asDate($profile->birthday),
     'Sähköposti' => $profile->email === null ? null : Html::mailto(Html::encode($profile->email), $profile->email),
     'Kaupunki' => $profile->city === null ? null : Html::encode($profile->city),
-    'Parisuhdetilanne' => $profile->relationship === null ? null : Html::encode($profile->relationship),
     'Kotisivu' => $profile->homepage === null
         ? null
         : Html::a(Html::encode($profile->homepage), $profile->homepage, ['rel' => 'nofollow noopener', 'target' => '_blank']),
