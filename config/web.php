@@ -35,6 +35,10 @@ $config = [
             'enableAutoLogin' => true,
             'loginUrl' => ['site/login'],
         ],
+        'assetManager' => [
+            // ?v=<mtime> on CSS/JS URLs so browsers pick up edited files immediately.
+            'appendTimestamp' => true,
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
@@ -63,19 +67,21 @@ $config = [
 ];
 
 if (YII_ENV_DEV) {
+    // Debug toolbar and Gii are only reachable from these addresses. Docker live mode adds
+    // the Docker network (requests from the host arrive through its gateway).
+    $allowedIPs = array_map('trim', explode(',', getenv('DEV_ALLOWED_IPS') ?: '127.0.0.1,::1'));
+
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => \yii\debug\Module::class,
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => $allowedIPs,
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => \yii\gii\Module::class,
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => $allowedIPs,
     ];
 }
 

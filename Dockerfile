@@ -15,6 +15,16 @@ COPY . .
 RUN composer dump-autoload --no-interaction
 CMD ["composer", "tests"]
 
+# Live development image used by docker-compose.dev.yml (`./dev live`): dev dependencies
+# (debug toolbar, Gii) are baked in, the source code is bind-mounted from the host.
+FROM base AS dev
+COPY docker/php-dev.ini /usr/local/etc/php/conf.d/zz-amklogi-dev.ini
+COPY composer.json composer.lock ./
+RUN composer install --prefer-dist --no-interaction --no-progress --no-scripts
+COPY --chmod=0755 docker/entrypoint.sh /usr/local/bin/amklogi-entrypoint
+ENTRYPOINT ["amklogi-entrypoint"]
+CMD ["apache2-foreground"]
+
 # Production image (default target).
 FROM base AS app
 ENV YII_ENV=prod \

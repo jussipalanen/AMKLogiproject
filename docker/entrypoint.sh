@@ -4,6 +4,12 @@
 set -e
 cd /app
 
+# In live mode Apache runs with the host user's uid (PHP_USER_ID) so it can write to the
+# bind-mounted project; switch before fixing ownership below.
+if [ -n "${PHP_USER_ID:-}" ] && [ "$PHP_USER_ID" != "0" ]; then
+    usermod -u "$PHP_USER_ID" www-data >/dev/null 2>&1 || true
+fi
+
 # Named volumes are created empty and owned by root.
 mkdir -p runtime web/assets web/uploads
 chown -R www-data:www-data runtime web/assets web/uploads

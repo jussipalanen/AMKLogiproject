@@ -3,6 +3,7 @@
 # AMKLogi development helper around Docker Compose.
 #
 #   ./dev            same as ./dev up
+#   ./dev live       live mode: edits show up on save, no rebuilds
 #   ./dev help       list all commands
 #
 set -euo pipefail
@@ -28,13 +29,28 @@ fi
 APP_PORT="${APP_PORT:-8080}"
 MAILPIT_PORT="${MAILPIT_PORT:-8025}"
 
+# The mode (prod or live) is remembered in .dev-mode so every command, e.g. restart
+# or logs, acts on the containers that are actually running.
+MODE_FILE=.dev-mode
+MODE="$(cat "$MODE_FILE" 2>/dev/null || echo prod)"
+
 compose() {
-    "${COMPOSE[@]}" "$@"
+    if [[ "$MODE" == live ]]; then
+        HOST_UID="$(id -u)" "${COMPOSE[@]}" -f docker-compose.yml -f docker-compose.dev.yml "$@"
+    else
+        "${COMPOSE[@]}" -f docker-compose.yml "$@"
+    fi
+}
+
+set_mode() {
+    MODE="$1"
+    echo "$MODE" > "$MODE_FILE"
 }
 
 print_urls() {
     cat <<EOF
 
+  Mode      ${MODE}$([[ "$MODE" == live ]] && echo ' (saved changes are live, refresh the browser)')
   AMKLogi   http://localhost:${APP_PORT}
   Mailpit   http://localhost:${MAILPIT_PORT}
   Demo      matti / liisa / admin, password demo1234 (when SEED_DEMO_DATA=true)
@@ -67,6 +83,11 @@ usage() {
     cat <<EOF
 Usage: ./dev <command> [arguments]
 
+Modes (remembered between commands, current: ${MODE})
+  live              Mount the project into the container: saved changes show up on the
+                    next page load, Yii dev mode with debug toolbar and Gii (/gii)
+  prod              Production-like image with the code built in (changes need recreate)
+
 Containers
   up                Build (if needed) and start everything in the background (default)
   run               Build and start in the foreground with logs (Ctrl+C stops)
@@ -93,6 +114,13 @@ command="${1:-up}"
 shift || true
 
 case "$command" in
+    live | prod)
+        set_mode "$command"
+        # -V gives the live container a fresh vendor/ volume from the rebuilt image.
+        compose up -d --build --renew-anon-volumes --remove-orphans
+        wait_for_app
+        print_urls
+        ;;
     up | start)
         compose up -d --build
         wait_for_app
@@ -109,7 +137,7 @@ case "$command" in
         ;;
     recreate)
         compose build --pull
-        compose up -d --force-recreate --remove-orphans
+        compose up -d --force-recreate --renew-anon-volumes --remove-orphans
         wait_for_app
         print_urls
         ;;
@@ -128,6 +156,7 @@ case "$command" in
         print_urls
         ;;
     status | ps)
+        echo "Mode: ${MODE}"
         compose ps
         ;;
     logs)

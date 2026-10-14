@@ -22,6 +22,7 @@ on rakennettu uudelleen, ja sovelluksen voi käynnistää yhdellä komennolla Do
 
 ```bash
 ./dev          # rakentaa ja käynnistää sovelluksen, MySQL:n ja Mailpitin
+./dev live     # kehitystila: tallennetut muutokset näkyvät heti selaimessa
 ```
 
 | Palvelu | Osoite |
@@ -45,9 +46,9 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 | Profiilisivu | Osoitteessa `/<tunnus>`, kuten alkuperäisessä sovelluksessa. Näyttää profiilikuvan ja täytetyt tiedot. |
 | Profiilin muokkaus | Nimi, sukupuoli, syntymäpäivä, paikkakunta, parisuhde, sähköposti, kotisivu ja Skype. Tämä puuttui alkuperäisestä versiosta. |
 | Profiilikuva | JPG, PNG, GIF tai WebP, enintään 5 Mt. Kuva pienennetään (max 600 px) ja tallennetaan JPEG-muodossa. |
-| Kommenttiseinä | Julkiset ja yksityiset kommentit. Lähetys toimii ilman sivun uudelleenlatausta, ja myös ilman JavaScriptiä. |
+| Kommenttiseinä | Julkiset ja yksityiset kommentit. Enter lähettää ja Shift + Enter tekee rivinvaihdon. Lähetys toimii ilman sivun uudelleenlatausta, ja myös ilman JavaScriptiä. |
 | Yksityiset kommentit | Näkyvät vain kirjoittajalle, seinän omistajalle ja ylläpitäjälle (`admin`-rooli). |
-| Uusien kommenttien ilmoitus | Valikossa näkyy uusien kommenttien määrä. Se nollautuu, kun käyttäjä avaa oman sivunsa. |
+| Uusien kommenttien ilmoitus | Uusien kommenttien määrä näkyy punaisena valikon vasemmassa reunassa, esim. **(1)**, sekä etusivun Kirjautuminen-laatikossa. Määrä nollautuu, kun käyttäjä avaa oman sivunsa. |
 | Käyttäjälista | Kaikki käyttäjät sivutettuna. |
 | Yhteydenottolomake | Lähettää sähköpostin ylläpidolle. CAPTCHA on käytössä, kun GD tai Imagick on asennettu. |
 | Käyttöliittymä | Suomenkielinen. Alkuperäisen AMKLog-ulkoasun mukainen tumma teema (sininen raidallinen banneri, laatikot sivupalkissa), toteutettu modernilla CSS:llä ja responsiivisena puhelimille. |
@@ -61,8 +62,23 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 
 Vaatimukset: Docker ja Docker Compose. Kaikki komennot ajetaan projektin juuresta.
 
+#### Tilat: live ja prod
+
+| Tila | Komento | Koodi | Muutokset näkyvät |
+|---|---|---|---|
+| **live** (kehitys) | `./dev live` | Projektikansio liitetään konttiin | Heti tallennuksen jälkeen, kun selaimen päivittää. Yii `dev`-tilassa: debug-palkki ja Gii (`/gii`). |
+| **prod** (oletus) | `./dev prod` | Koodi kopioidaan imageen | Vasta `./dev recreate` -komennon jälkeen |
+
+Valittu tila tallentuu tiedostoon `.dev-mode`, joten muut komennot (`restart`, `logs`, `down`, …)
+koskevat aina käynnissä olevaa tilaa. Live-tilassakin `composer.json`-muutokset ja Dockerfile
+vaativat `./dev recreate` -komennon.
+
+#### Komennot
+
 | Komento | Mitä tekee |
 |---|---|
+| `./dev live` | Vaihtaa live-tilaan ja käynnistää |
+| `./dev prod` | Vaihtaa tuotantotyyppiseen tilaan ja käynnistää |
 | `./dev` tai `./dev up` | Rakentaa imaget tarvittaessa ja käynnistää kaiken taustalle |
 | `./dev run` | Käynnistää etualalle lokit näkyvissä (Ctrl+C pysäyttää) |
 | `./dev restart` | Käynnistää kontit uudelleen |
@@ -81,7 +97,8 @@ Vaatimukset: Docker ja Docker Compose. Kaikki komennot ajetaan projektin juurest
 Ilman skriptiä samat asiat onnistuvat suoraan Composella:
 
 ```bash
-docker compose up -d --build                    # käynnistys
+docker compose up -d --build                    # käynnistys (prod)
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build   # live
 docker compose --profile test run --rm tests    # testit
 docker compose down                             # pysäytys
 ```
@@ -94,6 +111,9 @@ docker compose down                             # pysäytys
 | `db` | `mysql:8.4` | Tietokanta (utf8mb4) |
 | `mailpit` | `axllent/mailpit:v1.31` | Ottaa vastaan sovelluksen sähköpostit, joita voi lukea selaimella |
 | `tests` | Dockerfilen `test`-vaihe | Ajetaan vain `test`-profiililla |
+
+Live-tilassa `app` käyttää Dockerfilen `dev`-vaihetta (`amklogi:dev`), jossa ovat myös kehitysriippuvuudet.
+Apache ajetaan käyttäjätunnuksellasi (`PHP_USER_ID`), joten sen kirjoittamat tiedostot pysyvät muokattavina.
 
 Pysyvä data on nimetyissä volumeissa: `db-data` (tietokanta), `uploads` (profiilikuvat) ja `runtime`
 (lokit, välimuisti, evästeavain).
@@ -122,6 +142,7 @@ Docker Compose lukee arvot `.env`-tiedostosta. Kopioi `.env.example` → `.env` 
 | `COOKIE_VALIDATION_KEY` | generoidaan | Evästeiden allekirjoitusavain. Tyhjänä avain luodaan tiedostoon `runtime/cookie_validation.key`. |
 | `SEED_DEMO_DATA` | `true` | Luo demokäyttäjät ensimmäisellä käynnistyksellä (vain Docker) |
 | `APP_TIMEZONE` | `Europe/Helsinki` | Aikavyöhyke |
+| `DEV_ALLOWED_IPS` | `127.0.0.1,::1` | Osoitteet, joista debug-palkki ja Gii näkyvät `dev`-tilassa. Live-tila lisää Dockerin verkon. |
 
 </details>
 
@@ -202,7 +223,7 @@ assets/          Asset bundle (CSS/JS)
 commands/        Konsolikomennot (php yii seed)
 config/          Konfiguraatio: web, console, test, tietokanta, sähköposti, URL-säännöt
 controllers/     Site-, User-, Profile- ja CommentController
-docker/          Docker-entrypoint ja PHP-asetukset
+docker/          Docker-entrypoint ja PHP-asetukset (php.ini, php-dev.ini)
 migrations/      Tietokantamigraatiot
 models/          ActiveRecord-mallit ja lomakemallit
 tests/           Codeception: Unit- ja Functional-testit
@@ -210,8 +231,9 @@ views/           Näkymät (layout, site, user, profile)
 web/             Julkinen hakemisto: index.php, css/site.css (teema), js, images, uploads/
 widgets/         Alert-widget
 dev              Kehitysskripti Docker Composelle
-Dockerfile       app- ja test-imaget
-docker-compose.yml
+Dockerfile       app-, dev- ja test-imaget
+docker-compose.yml       sovellus, MySQL ja Mailpit
+docker-compose.dev.yml   live-tilan lisäasetukset
 ```
 
 </details>
