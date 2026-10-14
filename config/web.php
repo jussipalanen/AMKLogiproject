@@ -21,7 +21,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        '@uploads' => '@webroot/uploads',
+        '@uploads' => dirname(__DIR__) . '/web/uploads',
     ],
     'components' => [
         'request' => [

@@ -24,7 +24,7 @@
         toggle.textContent = theme === 'dark' ? '\u2600' : '\uD83C\uDF19'
         toggle.setAttribute(
             'aria-label',
-            theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+            theme === 'dark' ? 'Vaihda vaaleaan teemaan' : 'Vaihda tummaan teemaan'
         )
     }
 

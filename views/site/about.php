@@ -1,29 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var yii\web\View $this */
 
 use yii\helpers\Html;
 
-$this->title = 'About';
+$this->title = 'Tietoa';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['meta_description'] = 'Learn more about this Yii2-powered application.';
-$this->params['meta_keywords'] = 'yii, yii2, about, php, framework';
 ?>
-<div class="site-about d-flex align-items-center justify-content-center text-center">
-    <div class="site-about-content mx-auto">
-        <h1 class="display-6 fw-semibold mb-3">This is the About page.</h1>
+<div class="site-about col-lg-8">
+    <h1 class="h2"><?= Html::encode($this->title) ?></h1>
 
-        <p class="text-body-secondary mb-4">
-            You may modify the following file to customize its content:
-            <?php if (YII_DEBUG): ?>
-                <code class="d-block mt-2"><?= __FILE__ ?></code>
-            <?php endif; ?>
-        </p>
+    <p>
+        AMKLogi on sosiaalinen mediapalvelu ammattikorkeakoulun opiskelijoille. Se syntyi
+        vuonna 2013 opinnäytetyönä Yii 1.1 -sovelluskehyksellä, ja on sittemmin päivitetty
+        Yii 2:een ja nykyaikaiseen PHP:hen.
+    </p>
 
-        <?= Html::a(
-            'Go to Homepage',
-            Yii::$app->homeUrl,
-            ['class' => 'btn btn-outline-primary btn-lg'],
-        ) ?>
-    </div>
+    <h2 class="h5 mt-4">Ominaisuudet</h2>
+    <ul>
+        <li>Rekisteröityminen ja kirjautuminen</li>
+        <li>Profiilisivu osoitteessa <code><?= Html::encode(Yii::$app->request->hostInfo) ?>/<em>tunnus</em></code></li>
+        <li>Profiilikuvan lataus</li>
+        <li>Kommenttiseinä julkisilla ja yksityisillä kommenteilla sekä ilmoitus uusista kommenteista</li>
+    </ul>
 </div>

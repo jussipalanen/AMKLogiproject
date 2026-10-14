@@ -18,8 +18,7 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
-        '@webroot' => '@app/web',
-        '@uploads' => '@webroot/uploads',
+        '@uploads' => dirname(__DIR__) . '/web/uploads',
     ],
     'components' => [
         'cache' => [

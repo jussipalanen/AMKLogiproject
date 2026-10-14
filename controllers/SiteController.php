@@ -7,10 +7,11 @@ namespace app\controllers;
 use Yii;
 use app\models\ContactForm;
 use app\models\LoginForm;
+use app\models\SignupForm;
+use app\models\User;
 use yii\captcha\CaptchaAction;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\base\Security;
 use yii\mail\MailerInterface;
 use yii\web\Controller;
 use yii\web\ErrorAction;
@@ -22,7 +23,6 @@ class SiteController extends Controller
         $id,
         $module,
         private readonly MailerInterface $mailer,
-        private readonly Security $security,
         $config = [],
     ) {
         parent::__construct($id, $module, $config);
@@ -36,14 +36,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout'],
+                'only' => ['logout', 'signup'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['signup'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
                 ],
+                'denyCallback' => fn () => $this->goHome(),
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
@@ -72,30 +78,29 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
+     * Displays homepage with the newest members.
      */
     public function actionIndex(): string
     {
-        return $this->render('index');
+        $newestUsers = User::find()
+            ->with('profile')
+            ->orderBy(['created_at' => SORT_DESC, 'id' => SORT_DESC])
+            ->limit(8)
+            ->all();
+
+        return $this->render('index', ['newestUsers' => $newestUsers]);
     }
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
     public function actionLogin(): Response|string
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
-        $model = new LoginForm($this->security);
+        $model = new LoginForm();
 
         if ($model->load($this->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->goBack(['user/view', 'username' => $model->getUser()->username]);
         }
 
         $model->password = '';
@@ -103,11 +108,6 @@ class SiteController extends Controller
         return $this->render('login', ['model' => $model]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
     public function actionLogout(): Response
     {
         Yii::$app->user->logout();
@@ -116,10 +116,25 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays contact page.
-     *
-     * @return Response|string
+     * Registration (the original site/register).
      */
+    public function actionSignup(): Response|string
+    {
+        $model = new SignupForm();
+
+        if ($model->load($this->request->post()) && ($user = $model->signup()) !== null) {
+            Yii::$app->user->login($user);
+            Yii::$app->session->setFlash('success', 'Kiitos rekisteröinnistä! Täydennä vielä profiilisi tiedot.');
+
+            return $this->redirect(['profile/update']);
+        }
+
+        $model->password = '';
+        $model->password_repeat = '';
+
+        return $this->render('signup', ['model' => $model]);
+    }
+
     public function actionContact(): Response|string
     {
         $model = new ContactForm();
@@ -134,7 +149,7 @@ class SiteController extends Controller
         if ($contact) {
             Yii::$app->session->setFlash(
                 'success',
-                'Thank you for contacting us. We will respond to you as soon as possible.',
+                'Kiitos yhteydenotostasi! Vastaamme sinulle mahdollisimman pian.',
             );
 
             return $this->refresh();
@@ -143,11 +158,6 @@ class SiteController extends Controller
         return $this->render('contact', ['model' => $model]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
     public function actionAbout(): string
     {
         return $this->render('about');
