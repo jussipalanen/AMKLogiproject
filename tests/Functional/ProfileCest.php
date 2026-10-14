@@ -35,7 +35,8 @@ final class ProfileCest
         $I->see('Profiili tallennettu.');
 
         $I->amOnPage('/liisa');
-        $I->see('Liisa Laaksonen');
+        $I->see('Liisa', '.profile-details');
+        $I->see('Laaksonen', '.profile-details');
         $I->see('Nainen');
         $I->see('<b>Kotka</b>');
         $I->seeLink('https://example.com', 'https://example.com');

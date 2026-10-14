@@ -8,30 +8,31 @@ declare(strict_types=1);
 use yii\helpers\Html;
 use yii\widgets\ListView;
 
-$this->title = 'Käyttäjät';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Selaa käyttäjiä';
 ?>
-<div class="user-index">
-    <h1 class="h2 mb-4"><?= Html::encode($this->title) ?></h1>
+<article class="amk-box user-index">
+    <div class="amk-box-body">
+        <h1 class="amk-box-title"><?= Html::encode($this->title) ?></h1>
 
-    <?= ListView::widget([
-        'dataProvider' => $dataProvider,
-        'options' => ['class' => 'row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3'],
-        'itemOptions' => ['class' => 'col'],
-        'layout' => "{items}\n<div class=\"col-12\">{pager}</div>",
-        'emptyText' => 'Ei vielä käyttäjiä.',
-        'emptyTextOptions' => ['class' => 'col-12 text-body-secondary'],
-        'pager' => ['class' => \yii\bootstrap5\LinkPager::class],
-        'itemView' => static fn (app\models\User $user): string => Html::a(
-            Yii::$app->view->render('/user/_avatar', ['user' => $user, 'size' => 48])
-                . Html::tag(
-                    'span',
-                    Html::tag('span', Html::encode($user->username), ['class' => 'fw-semibold d-block'])
-                        . Html::tag('span', Html::encode($user->profile?->fullName ?? ''), ['class' => 'small text-body-secondary']),
-                    ['class' => 'min-w-0 text-truncate'],
-                ),
-            ['/user/view', 'username' => $user->username],
-            ['class' => 'card card-body d-flex flex-row align-items-center gap-3 text-decoration-none user-card shadow-sm'],
-        ),
-    ]) ?>
-</div>
+        <?= ListView::widget([
+            'dataProvider' => $dataProvider,
+            'options' => ['class' => 'amk-user-grid'],
+            'itemOptions' => ['tag' => false],
+            'layout' => "{items}\n<div style=\"grid-column: 1 / -1\">{pager}</div>",
+            'emptyText' => 'Ei vielä käyttäjiä.',
+            'emptyTextOptions' => ['class' => 'amk-empty'],
+            'pager' => ['class' => \yii\bootstrap5\LinkPager::class],
+            'itemView' => static fn (app\models\User $user): string => Html::a(
+                Yii::$app->view->render('/user/_avatar', ['user' => $user, 'size' => 48])
+                    . Html::tag(
+                        'span',
+                        Html::tag('strong', Html::encode($user->username))
+                            . Html::encode($user->profile?->fullName ?? ''),
+                        ['class' => 'min-w-0 text-truncate'],
+                    ),
+                ['/user/view', 'username' => $user->username],
+                ['class' => 'amk-user-card'],
+            ),
+        ]) ?>
+    </div>
+</article>

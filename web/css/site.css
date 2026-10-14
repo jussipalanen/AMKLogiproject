@@ -1,45 +1,456 @@
-main > .container {
-    padding: 70px 15px 20px;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
+/*
+ * AMKLogi theme – modern recreation of the original 2013 AMKLog look:
+ * dark striped page, thin grey top menu, blue striped banner, dark boxes with a
+ * blue top strip, left sidebar and a black footer bar.
+ */
+
+:root {
+    --amk-max-width: 960px;
+    --amk-gap: 20px;
+    --amk-sidebar-width: 270px;
+
+    --amk-page-bg: #161616;
+    --amk-page-stripe: rgba(255, 255, 255, 0.025);
+    --amk-topbar-bg: #2b2b2b;
+    --amk-topbar-border: #3a3a3a;
+    --amk-topbar-link: #b4b4b4;
+    --amk-box-bg: #232323;
+    --amk-box-border: #2f2f2f;
+    --amk-subnav-bg: #0e0e0e;
+    --amk-text: #dcdcdc;
+    --amk-muted: #9a9a9a;
+    --amk-heading: #ffffff;
+    --amk-link: #3aa9ff;
+    --amk-link-hover: #8fd0ff;
+    --amk-blue-light: #2b8fd6;
+    --amk-blue: #0d5c9c;
+    --amk-blue-dark: #083f6d;
+    /* private comments were #A229FF in the original */
+    --amk-private: #b675ff;
+
+    --amk-font: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
+    --amk-font-heading: Verdana, Tahoma, "Segoe UI", system-ui, sans-serif;
+    --amk-font-banner: Georgia, "Times New Roman", Times, serif;
+
+    --amk-strip: linear-gradient(to bottom, var(--amk-blue-light), var(--amk-blue) 55%, var(--amk-blue-dark));
 }
 
-.not-set {
-    color: var(--bs-danger);
-    font-style: italic;
+/* Bootstrap dark theme tuned to the AMKLog palette */
+[data-bs-theme="dark"] {
+    --bs-body-bg: var(--amk-page-bg);
+    --bs-body-color: var(--amk-text);
+    --bs-body-font-family: var(--amk-font);
+    --bs-body-font-size: 0.8125rem;
+    --bs-secondary-color: var(--amk-muted);
+    --bs-link-color: var(--amk-link);
+    --bs-link-color-rgb: 58, 169, 255;
+    --bs-link-hover-color: var(--amk-link-hover);
+    --bs-link-hover-color-rgb: 143, 208, 255;
+    --bs-border-color: #444;
+    --bs-tertiary-bg: #1b1b1b;
+    --bs-primary: var(--amk-blue);
+    --bs-primary-rgb: 13, 92, 156;
+    /* flat 2013-style controls */
+    --bs-border-radius: 2px;
+    --bs-border-radius-sm: 2px;
+    --bs-border-radius-lg: 3px;
 }
 
-/* add sorting icons to gridview sort links */
-a.asc:after, a.desc:after {
-    content: '';
-    left: 3px;
+body {
+    min-height: 100vh;
+    background-color: var(--amk-page-bg);
+    background-image: repeating-linear-gradient(
+        135deg,
+        var(--amk-page-stripe) 0 2px,
+        transparent 2px 9px
+    );
+}
+
+a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ---- Top menu --------------------------------------------------------- */
+
+.amk-container,
+.amk-page {
+    width: min(100% - 24px, var(--amk-max-width));
+    margin-inline: auto;
+}
+
+.amk-topbar {
+    --bs-navbar-padding-y: 0;
+    --bs-navbar-color: var(--amk-topbar-link);
+    --bs-navbar-hover-color: #fff;
+    --bs-navbar-active-color: #fff;
+    --bs-navbar-nav-link-padding-x: 0.9rem;
+    background: linear-gradient(to bottom, #333, var(--amk-topbar-bg));
+    border-bottom: 1px solid var(--amk-topbar-border);
+    font-size: 0.75rem;
+}
+
+.amk-topbar .nav-link {
+    padding-block: 0.35rem;
+    text-decoration: none;
+}
+
+.amk-topbar .navbar-nav > .nav-item:first-child .nav-link {
+    padding-left: 0;
+}
+
+.amk-topbar .badge {
+    font-size: 0.65rem;
+    vertical-align: 1px;
+}
+
+.amk-topbar .nav-link.logout {
+    color: var(--bs-navbar-color);
+}
+
+.amk-topbar .nav-link.logout:hover,
+.amk-topbar .nav-link.logout:focus {
+    color: var(--bs-navbar-hover-color);
+}
+
+.amk-toggler {
+    margin-block: 0.35rem;
+    padding: 0.2rem 0.45rem;
+    border-color: var(--amk-topbar-border);
+    font-size: 0.9rem;
+}
+
+/* ---- Banner ----------------------------------------------------------- */
+
+.amk-banner {
+    position: relative;
+    margin-block: 16px var(--amk-gap);
+    padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 38px) clamp(32px, 5vw, 26px);
+    color: #fff;
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.06) 0 14px,
+            transparent 14px 34px
+        ),
+        linear-gradient(to bottom, #1167ad 0, var(--amk-blue) 55%, var(--amk-blue-dark) 56%, #0a4a80 100%);
+    border: 1px solid #0a3a63;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.amk-banner-title {
     display: inline-block;
-    width: 0;
-    height: 0;
-    border: solid 5px transparent;
-    margin: 4px 4px 2px 4px;
-    background: transparent;
+    font-family: var(--amk-font-banner);
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    line-height: 1.1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
 }
 
-a.asc:after {
-    border-bottom: solid 7px var(--bs-body-color);
-    border-top-width: 0;
+.amk-banner-title:hover,
+.amk-banner-title:focus {
+    color: #fff;
 }
 
-a.desc:after {
-    border-top: solid 7px var(--bs-body-color);
-    border-bottom-width: 0;
+.amk-banner-subtitle {
+    margin: 0.25rem 0 0;
+    font-family: var(--amk-font-banner);
+    font-size: clamp(1rem, 2.6vw, 1.3rem);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-.grid-view th {
-    white-space: nowrap;
+.amk-banner-version {
+    position: absolute;
+    right: clamp(10px, 2vw, 16px);
+    bottom: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.hint-block {
+/* ---- Columns ---------------------------------------------------------- */
+
+.amk-columns {
+    display: grid;
+    grid-template-columns: var(--amk-sidebar-width) minmax(0, 1fr);
+    gap: var(--amk-gap);
+    align-items: start;
+}
+
+.amk-sidebar,
+.amk-main {
+    display: grid;
+    gap: var(--amk-gap);
+    min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+    .amk-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---- Boxes ------------------------------------------------------------ */
+
+.amk-box {
+    background: var(--amk-box-bg);
+    border: 1px solid var(--amk-box-border);
+    border-top: 0;
+}
+
+.amk-box::before {
+    content: "";
     display: block;
-    margin-top: 5px;
-    color: var(--bs-secondary-color);
+    height: 12px;
+    background: var(--amk-strip);
+    border-bottom: 1px solid #000;
+}
+
+.amk-box-body {
+    padding: 14px clamp(12px, 3vw, 16px) 16px;
+}
+
+.amk-box-title {
+    margin: 0 0 0.75rem;
+    font-family: var(--amk-font-heading);
+    font-size: clamp(1.2rem, 3.5vw, 1.35rem);
+    font-weight: 700;
+    color: var(--amk-heading);
+}
+
+.amk-box h2:not(.amk-box-title),
+.amk-section-title {
+    margin: 1.25rem 0 0.6rem;
+    font-family: var(--amk-font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--amk-heading);
+}
+
+.amk-box p {
+    line-height: 1.75;
+}
+
+.amk-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    padding: 0.55rem clamp(12px, 3vw, 16px);
+    margin: 0;
+    list-style: none;
+    background: var(--amk-subnav-bg);
+    font-size: 0.75rem;
+}
+
+.amk-subnav a[aria-current="page"] {
+    color: #fff;
+}
+
+/* "Etunimi: Jussi" style detail lists */
+.amk-facts {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.7;
+}
+
+.amk-facts div {
+    display: flex;
+    gap: 0.3em;
+    min-width: 0;
+}
+
+.amk-facts dt {
+    font-weight: normal;
+}
+
+.amk-facts dt::after {
+    content: ":";
+}
+
+.amk-facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.amk-actions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.75rem;
+    line-height: 1.7;
+}
+
+.amk-actions a::before {
+    content: "» ";
+}
+
+.amk-list {
+    margin: 0;
+    padding-left: 1.4rem;
+    line-height: 1.7;
+}
+
+.amk-empty {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+/* ---- Avatars ---------------------------------------------------------- */
+
+.amk-avatar {
+    flex-shrink: 0;
+    object-fit: cover;
+    background: #d3d9dc;
+    border: 1px solid #000;
+}
+
+.amk-portrait {
+    display: block;
+    width: min(100%, 430px, 80vw);
+    aspect-ratio: 3 / 4;
+    margin: 0.5rem auto 1.25rem;
+    object-fit: cover;
+    background: #d3d9dc;
+    border: 1px solid #000;
+}
+
+.amk-user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 10px;
+}
+
+.amk-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px;
+    background: #1b1b1b;
+    border: 1px solid var(--amk-box-border);
+    color: var(--amk-text);
+    text-decoration: none;
+}
+
+.amk-user-card:hover,
+.amk-user-card:focus-visible {
+    border-color: var(--amk-blue-light);
+    color: #fff;
+}
+
+.amk-user-card strong {
+    display: block;
+    color: var(--amk-link);
+}
+
+.amk-newest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ---- Comments --------------------------------------------------------- */
+
+.comment-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 36rem;
+    overflow-y: auto;
+}
+
+.comment {
+    display: flex;
+    gap: 10px;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.comment:last-child {
+    border-bottom: 0;
+}
+
+.comment-meta {
+    font-size: 0.75rem;
+    color: var(--amk-muted);
+}
+
+.comment-meta a {
+    font-weight: 700;
+}
+
+.comment-body {
+    margin: 0.15rem 0 0;
+    line-height: 1.6 !important;
+    overflow-wrap: anywhere;
+}
+
+.comment-private .comment-body {
+    color: var(--amk-private);
+}
+
+.comment-private-label {
+    margin-left: 0.4rem;
+    color: var(--amk-private);
+}
+
+.amk-comment-form {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #333;
+}
+
+/* ---- Forms and buttons ------------------------------------------------ */
+
+.amk-box .form-control,
+.amk-box .form-select {
+    padding: 0.3rem 0.5rem;
+    background-color: #161616;
+    border-color: #444;
+    font-size: 0.8125rem;
+}
+
+.amk-box .form-control:focus,
+.amk-box .form-select:focus {
+    border-color: var(--amk-blue-light);
+    box-shadow: 0 0 0 0.2rem rgba(43, 143, 214, 0.3);
+}
+
+.amk-box .form-label,
+.amk-box .col-form-label {
+    font-size: 0.75rem;
+    color: var(--amk-text);
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--amk-blue);
+    --bs-btn-border-color: var(--amk-blue-dark);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #1170bd;
+    --bs-btn-hover-border-color: var(--amk-blue-dark);
+    --bs-btn-active-bg: var(--amk-blue-dark);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent);
+    font-size: 0.8125rem;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--amk-link);
+    --bs-btn-border-color: var(--amk-blue-light);
+    --bs-btn-hover-bg: var(--amk-blue);
+    --bs-btn-hover-border-color: var(--amk-blue-light);
+    font-size: 0.8125rem;
+}
+
+.hint-block,
+.form-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    color: var(--amk-muted);
 }
 
 .error-summary {
@@ -50,116 +461,44 @@ a.desc:after {
     margin: 0 0 15px 0;
 }
 
-/* align navbar brand baseline with nav links */
-.navbar > .container,
-.navbar > .container-fluid {
-    align-items: baseline;
+/* captcha image is drawn dark-on-transparent */
+.amk-box img[src*="captcha"] {
+    background: #fff;
+    border: 1px solid #000;
 }
 
-/* align the logout "link" (button in form) of the navbar */
-.nav li > form > button.logout {
-    color: var(--bs-navbar-color);
+.amk-alert {
+    margin-bottom: var(--amk-gap);
+    border-radius: 0;
 }
 
-@media (max-width: 767.98px) {
-    .navbar-nav .nav-link.logout {
-        display: block;
-        text-align: left;
-        width: 100%;
-        padding: 10px 0;
-    }
+.pagination {
+    --bs-pagination-bg: var(--amk-box-bg);
+    --bs-pagination-active-bg: var(--amk-blue);
+    --bs-pagination-active-border-color: var(--amk-blue-light);
+    margin: 1rem 0 0;
 }
 
-.navbar-nav .nav-link.logout:focus,
-.navbar-nav .nav-link.logout:hover {
-    color: var(--bs-navbar-hover-color);
+/* ---- Footer ----------------------------------------------------------- */
+
+.amk-footer {
+    margin-block: var(--amk-gap) 24px;
+    padding: 24px 12px;
+    background: #000;
+    color: #fff;
+    font-size: 0.75rem;
+    text-align: center;
 }
 
-/* ---- AMKLogi ---------------------------------------------------------- */
-
-:root {
-    --amk-accent: #6f42c1;
-    --amk-accent-subtle: rgba(111, 66, 193, 0.08);
-}
-
-[data-bs-theme="dark"] {
-    --amk-accent: #a98eda;
-    --amk-accent-subtle: rgba(169, 142, 218, 0.12);
+.amk-footer a {
+    color: #fff;
 }
 
 .min-w-0 {
     min-width: 0;
 }
 
-.hero {
-    background:
-        radial-gradient(circle at 100% 0, var(--amk-accent-subtle), transparent 60%),
-        var(--bs-tertiary-bg);
-    border: 1px solid var(--bs-border-color-translucent);
-}
-
-/* avatars: uploaded picture or initial letter */
-.avatar {
-    display: inline-block;
-    flex-shrink: 0;
-}
-
-.avatar-placeholder {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: #fff;
-    background: var(--amk-accent);
-    user-select: none;
-}
-
-.newest-user {
-    width: 80px;
-    color: var(--bs-body-color);
-}
-
-.user-card {
-    color: var(--bs-body-color);
-    transition: border-color 0.15s ease-in-out;
-}
-
-.user-card:hover,
-.user-card:focus-visible {
-    border-color: var(--amk-accent);
-}
-
-.profile-details dt {
-    margin-bottom: 0.125rem;
-}
-
-/* comment wall */
-.comment-list {
-    max-height: 32rem;
-    overflow-y: auto;
-}
-
-.comment {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--bs-border-color-translucent);
-}
-
-.comment:last-child {
-    border-bottom: 0;
-}
-
-/* private comments were purple (#A229FF) in the original app */
-.comment-private {
-    border-left: 3px solid var(--amk-accent);
-    padding-left: 0.75rem;
-    background: var(--amk-accent-subtle);
-}
-
-.comment-body {
-    overflow-wrap: anywhere;
-}
-
-/* captcha image: keep readable in dark mode */
-[data-bs-theme="dark"] .site-contact img[src*="captcha"] {
-    filter: invert(1) hue-rotate(180deg);
+/* single forms (login, registration) stay readable on wide screens */
+.amk-narrow {
+    width: min(100%, 480px);
 }

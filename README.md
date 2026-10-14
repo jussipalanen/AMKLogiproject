@@ -50,7 +50,7 @@ Demotunnukset: `matti`, `liisa` ja `admin`. Salasana on kaikilla `demo1234`.
 | Uusien kommenttien ilmoitus | Valikossa näkyy uusien kommenttien määrä. Se nollautuu, kun käyttäjä avaa oman sivunsa. |
 | Käyttäjälista | Kaikki käyttäjät sivutettuna. |
 | Yhteydenottolomake | Lähettää sähköpostin ylläpidolle. CAPTCHA on käytössä, kun GD tai Imagick on asennettu. |
-| Käyttöliittymä | Suomenkielinen, Bootstrap 5, vaalea ja tumma teema. |
+| Käyttöliittymä | Suomenkielinen. Alkuperäisen AMKLog-ulkoasun mukainen tumma teema (sininen raidallinen banneri, laatikot sivupalkissa), toteutettu modernilla CSS:llä ja responsiivisena puhelimille. |
 
 </details>
 
@@ -207,7 +207,7 @@ migrations/      Tietokantamigraatiot
 models/          ActiveRecord-mallit ja lomakemallit
 tests/           Codeception: Unit- ja Functional-testit
 views/           Näkymät (layout, site, user, profile)
-web/             Julkinen hakemisto: index.php, css, js, uploads/
+web/             Julkinen hakemisto: index.php, css/site.css (teema), js, images, uploads/
 widgets/         Alert-widget
 dev              Kehitysskripti Docker Composelle
 Dockerfile       app- ja test-imaget
@@ -232,7 +232,7 @@ docker-compose.yml
 | Kovakoodatut polut (`C:\xampp\...`, `http://localhost/amklogi/...`) | Asetukset ympäristömuuttujista |
 | Gii päällä salasanalla `1234`, debug-tila aina päällä, tietokantana root ilman salasanaa | Debug ja Gii vain `dev`-tilassa, tuotantoasetukset Dockerissa |
 | Yksityisyys tallennettiin merkkijonoina `"true"`/`"false"` | Boolean-sarake ja luettu-aikaleima |
-| jQuery 1.5/1.9 ja Blueprint CSS | Bootstrap 5, `fetch()` ja tumma teema |
+| jQuery 1.5/1.9 ja kiinteäleveyksinen ulkoasu | Sama ulkoasu modernilla CSS:llä (CSS-muuttujat, grid, `clamp()`), responsiivinen; `fetch()` jQueryn sijaan |
 | Ei testejä | Codeceptionin yksikkö- ja toiminnalliset testit, PHPStan |
 | XAMPP | Docker Compose: PHP 8.5, MySQL 8.4 ja Mailpit |
 

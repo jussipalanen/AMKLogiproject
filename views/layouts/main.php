@@ -6,34 +6,44 @@ declare(strict_types=1);
 /** @var string $content */
 
 use app\widgets\Alert;
-use yii\bootstrap5\Breadcrumbs;
 use yii\helpers\Html;
 
 $this->render('_head');
+// Views can fill a left column with `$this->beginBlock('sidebar')`, as in the original layout.
+$sidebar = $this->blocks['sidebar'] ?? null;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100" data-bs-theme="light">
+<html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
 <head>
     <?php $this->head() ?>
-    <title><?= Html::encode($this->title) ?></title>
+    <title><?= Html::encode($this->title === Yii::$app->name ? $this->title : $this->title . ' – ' . Yii::$app->name) ?></title>
 </head>
-<body class="d-flex flex-column h-100">
+<body>
 <?php $this->beginBody() ?>
 
 <?= $this->render('_header') ?>
 
-<main id="main" class="flex-grow-1" role="main">
-    <div class="container">
-        <?php if (!empty($this->params['breadcrumbs'])): ?>
-            <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
-        <?php endif ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
-</main>
+<div class="amk-page">
+    <header class="amk-banner">
+        <?= Html::a(Html::encode(Yii::$app->name), Yii::$app->homeUrl, ['class' => 'amk-banner-title']) ?>
+        <p class="amk-banner-subtitle">Sosiaaliverkostoitumista ammattikorkeakouluille</p>
+        <span class="amk-banner-version">(Versio 2.0)</span>
+    </header>
 
-<?= $this->render('_footer') ?>
+    <?= Alert::widget(['options' => ['class' => 'amk-alert']]) ?>
+
+    <?php if ($sidebar !== null): ?>
+        <div class="amk-columns">
+            <aside class="amk-sidebar"><?= $sidebar ?></aside>
+            <main id="main" class="amk-main"><?= $content ?></main>
+        </div>
+    <?php else: ?>
+        <main id="main" class="amk-main"><?= $content ?></main>
+    <?php endif ?>
+
+    <?= $this->render('_footer') ?>
+</div>
 
 <?php $this->endBody() ?>
 </body>

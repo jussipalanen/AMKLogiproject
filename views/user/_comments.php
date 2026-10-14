@@ -9,31 +9,31 @@ use yii\helpers\Html;
 
 ?>
 <?php if ($comments === []): ?>
-    <p class="text-body-secondary mb-0">Ei vielä kommentteja.</p>
+    <p class="amk-empty">Ei vielä kommentteja.</p>
 <?php else: ?>
-    <ul class="list-unstyled comment-list mb-0">
+    <ul class="comment-list">
         <?php foreach ($comments as $comment): ?>
-            <li class="comment d-flex gap-3<?= $comment->is_private ? ' comment-private' : '' ?>">
+            <li class="comment<?= $comment->is_private ? ' comment-private' : '' ?>">
                 <?= Html::a(
                     $this->render('/user/_avatar', ['user' => $comment->author, 'size' => 40]),
                     ['/user/view', 'username' => $comment->author->username],
-                    ['class' => 'flex-shrink-0'],
+                    ['tabindex' => -1, 'aria-hidden' => 'true'],
                 ) ?>
-                <div class="flex-grow-1 min-w-0">
-                    <div class="small">
+                <div class="min-w-0">
+                    <div class="comment-meta">
                         <?= Html::a(
                             Html::encode($comment->author->username),
                             ['/user/view', 'username' => $comment->author->username],
-                            ['class' => 'fw-semibold'],
                         ) ?>
-                        <time class="text-body-secondary ms-1" datetime="<?= date(DATE_ATOM, $comment->created_at) ?>">
+                        &ndash;
+                        <time datetime="<?= date(DATE_ATOM, $comment->created_at) ?>">
                             <?= Yii::$app->formatter->asDatetime($comment->created_at) ?>
                         </time>
                         <?php if ($comment->is_private): ?>
-                            <span class="badge text-bg-secondary ms-1">Yksityinen</span>
+                            <span class="comment-private-label">(yksityinen)</span>
                         <?php endif ?>
                     </div>
-                    <p class="mb-0 comment-body"><?= nl2br(Html::encode($comment->body)) ?></p>
+                    <p class="comment-body"><?= nl2br(Html::encode($comment->body)) ?></p>
                 </div>
             </li>
         <?php endforeach ?>

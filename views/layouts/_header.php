@@ -13,13 +13,14 @@ use yii\helpers\Html;
 $identity = Yii::$app->user->identity;
 $unread = $identity?->getUnreadCommentCount() ?? 0;
 
+// Menu labels follow the original AMKLog menu (Etusivu, Oma, Selaa, ...).
 $items = [
     [
         'label' => 'Etusivu',
         'url' => ['/site/index'],
     ],
     [
-        'label' => 'Oma sivu'
+        'label' => 'Oma'
             . ($unread > 0
                 ? ' ' . Html::tag('span', $unread, [
                     'class' => 'badge rounded-pill text-bg-danger',
@@ -30,7 +31,7 @@ $items = [
         'visible' => $identity !== null,
     ],
     [
-        'label' => 'Käyttäjät',
+        'label' => 'Selaa',
         'url' => ['/user/index'],
     ],
     [
@@ -41,9 +42,6 @@ $items = [
         'label' => 'Ota yhteyttä',
         'url' => ['/site/contact'],
     ],
-];
-
-$accountItems = [
     [
         'label' => 'Kirjaudu sisään',
         'url' => ['/site/login'],
@@ -55,7 +53,7 @@ $accountItems = [
         'visible' => $identity === null,
     ],
     [
-        'label' => 'Muokkaa profiilia',
+        'label' => 'Asetukset',
         'url' => ['/profile/update'],
         'visible' => $identity !== null,
     ],
@@ -72,34 +70,17 @@ $accountItems = [
 
 ?>
 <header id="header">
-    <?php NavBar::begin(
-        [
-            'brandLabel' => Html::encode(Yii::$app->name),
-            'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top'],
-        ],
-    ) ?>
-    <?= Nav::widget(
-        [
-            'options' => ['class' => 'navbar-nav me-auto'],
-            'encodeLabels' => false,
-            'items' => $items,
-        ],
-    ) ?>
-    <?= Nav::widget(
-        [
-            'options' => ['class' => 'navbar-nav'],
-            'encodeLabels' => false,
-            'items' => $accountItems,
-        ],
-    ) ?>
-    <?= Html::button(
-        '&#127769;',
-        [
-            'id' => 'theme-toggle',
-            'class' => 'btn btn-link nav-link fs-5',
-            'aria-label' => 'Vaihda tummaan teemaan',
-        ],
-    ) ?>
+    <?php NavBar::begin([
+        'brandLabel' => false,
+        'options' => ['class' => 'navbar-expand-md amk-topbar', 'aria-label' => 'Päävalikko'],
+        'innerContainerOptions' => ['class' => 'amk-container'],
+        'togglerOptions' => ['class' => 'navbar-toggler amk-toggler'],
+        'screenReaderToggleText' => 'Näytä valikko',
+    ]) ?>
+    <?= Nav::widget([
+        'options' => ['class' => 'navbar-nav'],
+        'encodeLabels' => false,
+        'items' => $items,
+    ]) ?>
     <?php NavBar::end() ?>
 </header>

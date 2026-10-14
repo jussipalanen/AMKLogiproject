@@ -13,70 +13,87 @@ use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = $user->username;
-$this->params['breadcrumbs'][] = ['label' => 'Käyttäjät', 'url' => ['/user/index']];
-$this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/comments.js', ['depends' => AppAsset::class]);
 
 $profile = $user->profile;
 $isOwner = !Yii::$app->user->isGuest && Yii::$app->user->id === $user->id;
 
+// Labels as in the original "Tiedot" box.
 $details = array_filter([
-    'Nimi' => $profile->fullName !== '' ? Html::encode($profile->fullName) : null,
+    'Etunimi' => $profile->firstname === null ? null : Html::encode($profile->firstname),
+    'Sukunimi' => $profile->surname === null ? null : Html::encode($profile->surname),
     'Sukupuoli' => $profile->genderLabel,
-    'Syntymäpäivä' => $profile->birthday === null ? null : Yii::$app->formatter->asDate($profile->birthday),
-    'Paikkakunta' => $profile->city === null ? null : Html::encode($profile->city),
-    'Parisuhde' => $profile->relationship === null ? null : Html::encode($profile->relationship),
+    'Syntymäaika' => $profile->birthday === null ? null : Yii::$app->formatter->asDate($profile->birthday),
     'Sähköposti' => $profile->email === null ? null : Html::mailto(Html::encode($profile->email), $profile->email),
+    'Kaupunki' => $profile->city === null ? null : Html::encode($profile->city),
+    'Parisuhdetilanne' => $profile->relationship === null ? null : Html::encode($profile->relationship),
     'Kotisivu' => $profile->homepage === null
         ? null
         : Html::a(Html::encode($profile->homepage), $profile->homepage, ['rel' => 'nofollow noopener', 'target' => '_blank']),
     'Skype' => $profile->skype === null ? null : Html::encode($profile->skype),
 ], static fn (?string $value): bool => $value !== null);
 ?>
-<div class="user-view row g-4">
-    <aside class="col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <?= $this->render('_avatar', ['user' => $user, 'size' => 160]) ?>
-                </div>
-                <h1 class="h3 mb-1"><?= Html::encode($user->username) ?></h1>
-                <p class="text-body-secondary small mb-0">
-                    Jäsen <?= Yii::$app->formatter->asDate($user->created_at) ?> alkaen
-                </p>
-                <?php if ($isOwner): ?>
-                    <?= Html::a('Muokkaa profiilia', ['/profile/update'], ['class' => 'btn btn-outline-primary btn-sm mt-3']) ?>
-                <?php endif ?>
-            </div>
-            <?php if ($details !== []): ?>
-                <dl class="list-group list-group-flush mb-0 profile-details">
+<?php $this->beginBlock('sidebar') ?>
+    <section class="amk-box" aria-labelledby="details-title">
+        <div class="amk-box-body">
+            <h2 class="amk-box-title" id="details-title">Tiedot</h2>
+            <?php if ($details === []): ?>
+                <p class="amk-empty">Käyttäjä ei ole lisännyt tietoja.</p>
+            <?php else: ?>
+                <dl class="amk-facts profile-details">
                     <?php foreach ($details as $label => $value): ?>
-                        <div class="list-group-item">
-                            <dt class="small text-body-secondary fw-normal"><?= $label ?></dt>
-                            <dd class="mb-0 text-break"><?= $value ?></dd>
-                        </div>
+                        <div><dt><?= $label ?></dt><dd><?= $value ?></dd></div>
                     <?php endforeach ?>
                 </dl>
-            <?php elseif ($isOwner): ?>
-                <div class="card-footer small text-body-secondary">
-                    Profiilisi on vielä tyhjä. <?= Html::a('Lisää tietoja', ['/profile/update']) ?>.
-                </div>
             <?php endif ?>
+            <p class="amk-facts text-body-secondary mt-2 mb-0">
+                Jäsen <?= Yii::$app->formatter->asDate($user->created_at) ?> alkaen
+            </p>
         </div>
-    </aside>
+    </section>
 
-    <section class="col-lg-8" id="comments" aria-labelledby="comments-title">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="h5 mb-3" id="comments-title">Kommentit</h2>
-
-                <div data-comment-list>
-                    <?= $this->render('_comments', ['comments' => $comments]) ?>
-                </div>
+    <?php if ($isOwner): ?>
+        <section class="amk-box" aria-labelledby="actions-title">
+            <div class="amk-box-body">
+                <h2 class="amk-box-title" id="actions-title">Toiminnot</h2>
+                <ul class="amk-actions">
+                    <li><?= Html::a('Lataa profiilikuva', ['/profile/update', '#' => 'avatar-form']) ?></li>
+                    <li><?= Html::a('Muokkaa profiilia', ['/profile/update']) ?></li>
+                </ul>
             </div>
-            <div class="card-footer">
+        </section>
+    <?php endif ?>
+<?php $this->endBlock() ?>
+
+<article class="amk-box user-view">
+    <nav aria-label="Profiilin valikko">
+        <ul class="amk-subnav">
+            <li><?= Html::a('Profiili', ['/user/view', 'username' => $user->username], ['aria-current' => 'page']) ?></li>
+            <li><?= Html::a('Kommentit', '#comments') ?></li>
+            <?php if ($isOwner): ?>
+                <li><?= Html::a('Asetukset', ['/profile/update']) ?></li>
+            <?php endif ?>
+        </ul>
+    </nav>
+
+    <div class="amk-box-body">
+        <h1 class="amk-box-title"><?= Html::encode($user->username) ?></h1>
+
+        <?= Html::img($profile->avatarUrl ?? '@web/images/avatar-placeholder.svg', [
+            'alt' => $profile->avatarUrl === null ? 'Ei profiilikuvaa' : 'Käyttäjän ' . $user->username . ' profiilikuva',
+            'class' => 'amk-portrait',
+        ]) ?>
+
+        <section id="comments" aria-labelledby="comments-title">
+            <h2 id="comments-title">Kommentit</h2>
+
+            <div data-comment-list>
+                <?= $this->render('_comments', ['comments' => $comments]) ?>
+            </div>
+
+            <div class="amk-comment-form">
                 <?php if (Yii::$app->user->isGuest): ?>
-                    <p class="mb-0 small">
+                    <p class="mb-0">
                         <?= Html::a('Kirjaudu sisään', ['/site/login']) ?> kommentoidaksesi.
                     </p>
                 <?php else: ?>
@@ -103,6 +120,6 @@ $details = array_filter([
                     <?php ActiveForm::end() ?>
                 <?php endif ?>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>
+</article>

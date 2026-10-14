@@ -5,46 +5,87 @@ declare(strict_types=1);
 /** @var yii\web\View $this */
 /** @var app\models\User[] $newestUsers */
 
+use app\models\LoginForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = Yii::$app->name;
-$this->params['meta_description'] = 'AMKLogi – sosiaalinen mediapalvelu ammattikorkeakoulun opiskelijoille.';
+$this->params['meta_description'] = 'AMKLogi – sosiaalinen mediapalvelu ammattikorkeakoulun opiskelijoille ja opettajille.';
 /** @var app\models\User|null $identity */
 $identity = Yii::$app->user->identity;
 ?>
-<div class="site-index">
-    <section class="hero p-4 p-lg-5 mb-4 rounded-4">
-        <h1 class="display-5 fw-bold">Tervetuloa AMKLogiin</h1>
-        <p class="lead col-lg-8">
-            Sosiaalinen mediapalvelu ammattikorkeakoululle: luo profiili, lisää profiilikuva
-            ja kirjoita kommentteja muiden opiskelijoiden seinille &ndash; julkisesti tai yksityisesti.
-        </p>
-        <?php if ($identity === null): ?>
-            <?= Html::a('Rekisteröidy', ['/site/signup'], ['class' => 'btn btn-primary btn-lg me-2']) ?>
-            <?= Html::a('Kirjaudu sisään', ['/site/login'], ['class' => 'btn btn-outline-secondary btn-lg']) ?>
-        <?php else: ?>
-            <?= Html::a('Siirry omalle sivullesi', ['/user/view', 'username' => $identity->username], ['class' => 'btn btn-primary btn-lg']) ?>
-        <?php endif ?>
+<?php $this->beginBlock('sidebar') ?>
+    <section class="amk-box" aria-labelledby="login-box-title">
+        <div class="amk-box-body">
+            <h2 class="amk-box-title" id="login-box-title">Kirjautuminen</h2>
+            <?php if ($identity === null): ?>
+                <?php $form = ActiveForm::begin(['id' => 'sidebar-login-form', 'action' => ['/site/login']]) ?>
+                    <?= $form->field(new LoginForm(), 'username')->textInput(['autocomplete' => 'username']) ?>
+                    <?= $form->field(new LoginForm(), 'password')->passwordInput(['autocomplete' => 'current-password']) ?>
+                    <?= Html::submitButton('Kirjaudu', ['class' => 'btn btn-primary btn-sm']) ?>
+                <?php ActiveForm::end() ?>
+                <p class="mt-3 mb-0">Ei vielä tunnusta? <?= Html::a('Rekisteröidy', ['/site/signup']) ?></p>
+            <?php else: ?>
+                <p class="mb-3">
+                    Hei, <?= Html::a(Html::encode($identity->username), ['/user/view', 'username' => $identity->username]) ?>!<br>
+                    Mitä haluat tehdä?
+                </p>
+                <ul class="amk-actions">
+                    <li><?= Html::a('Lisää kuva', ['/profile/update']) ?></li>
+                    <li><?= Html::a('Muokkaa profiilia', ['/profile/update']) ?></li>
+                    <li><?= Html::a('Kirjaudu ulos', ['/site/logout'], ['data-method' => 'post']) ?></li>
+                </ul>
+            <?php endif ?>
+        </div>
     </section>
 
-    <section aria-labelledby="newest-title">
-        <div class="d-flex align-items-baseline justify-content-between mb-3">
-            <h2 class="h4 mb-0" id="newest-title">Uusimmat käyttäjät</h2>
-            <?= Html::a('Kaikki käyttäjät &rarr;', ['/user/index']) ?>
+    <section class="amk-box" aria-labelledby="newest-title">
+        <div class="amk-box-body">
+            <h2 class="amk-box-title" id="newest-title">Uusimmat käyttäjät</h2>
+            <?php if ($newestUsers === []): ?>
+                <p class="amk-empty">Ei vielä käyttäjiä.</p>
+            <?php else: ?>
+                <ol class="amk-list">
+                    <?php foreach (array_slice($newestUsers, 0, 5) as $user): ?>
+                        <li><?= Html::a(Html::encode($user->username), ['/user/view', 'username' => $user->username]) ?></li>
+                    <?php endforeach ?>
+                </ol>
+            <?php endif ?>
         </div>
-        <?php if ($newestUsers === []): ?>
-            <p class="text-body-secondary">Ei vielä käyttäjiä &ndash; ole ensimmäinen!</p>
-        <?php else: ?>
-            <div class="d-flex flex-wrap gap-3">
+    </section>
+<?php $this->endBlock() ?>
+
+<article class="amk-box site-index">
+    <div class="amk-box-body">
+        <h1 class="amk-box-title">Tervetuloa AMKLogiin!</h1>
+        <p>
+            AMKLogi on ammattikorkeakoululaisille tarkoitettu sosiaalinen mediapalvelu opiskelijoille ja
+            opettajille. Palvelussa voi luoda itselleen ilmaiseksi tunnuksen ja henkilökohtaisen profiilin.
+            Profiiliin voi lisätä oman kuvan ja tietoja itsestään, ja muut käyttäjät voivat kirjoittaa
+            profiilin kommenttiseinälle &ndash; julkisesti tai yksityisesti.
+        </p>
+
+        <h2>Mitäs muuta?</h2>
+        <p>
+            Uusista kommenteista näet ilmoituksen valikossa. Selaa-sivulta löydät kaikki palvelun käyttäjät,
+            ja yksityiset kommentit näkyvät vain sinulle ja kommentin kirjoittajalle.
+        </p>
+        <p>
+            Ylläpito toivottaa kaikki uudet käyttäjät tervetulleeksi palveluun. Rekisteröidy ilmaiseksi,
+            kommentoi ja tutustu uusiin opiskelijoihin ja opettajiin!
+        </p>
+
+        <?php if ($newestUsers !== []): ?>
+            <h2>Uusimmat jäsenet</h2>
+            <div class="amk-newest">
                 <?php foreach ($newestUsers as $user): ?>
                     <?= Html::a(
-                        $this->render('/user/_avatar', ['user' => $user, 'size' => 64])
-                            . Html::tag('span', Html::encode($user->username), ['class' => 'small d-block mt-1 text-truncate']),
+                        $this->render('/user/_avatar', ['user' => $user, 'size' => 64]),
                         ['/user/view', 'username' => $user->username],
-                        ['class' => 'newest-user text-center text-decoration-none'],
+                        ['title' => $user->username],
                     ) ?>
                 <?php endforeach ?>
             </div>
         <?php endif ?>
-    </section>
-</div>
+    </div>
+</article>
