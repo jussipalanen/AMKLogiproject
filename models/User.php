@@ -123,12 +123,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getReceivedComments(): CommentQuery
     {
-        return $this->hasMany(Comment::class, ['recipient_id' => 'id']);
+        return $this->commentRelation('recipient_id');
     }
 
     public function getAuthoredComments(): CommentQuery
     {
-        return $this->hasMany(Comment::class, ['author_id' => 'id']);
+        return $this->commentRelation('author_id');
     }
 
     /**
@@ -145,6 +145,20 @@ class User extends ActiveRecord implements IdentityInterface
             ['read_at' => time()],
             ['recipient_id' => $this->id, 'read_at' => null],
         );
+    }
+
+    /**
+     * Same as hasMany(Comment::class, ...), but typed as CommentQuery so that
+     * visibleTo()/unread() are known to static analysis.
+     */
+    private function commentRelation(string $foreignKey): CommentQuery
+    {
+        $query = Comment::find();
+        $query->primaryModel = $this;
+        $query->link = [$foreignKey => 'id'];
+        $query->multiple = true;
+
+        return $query;
     }
 
     /**

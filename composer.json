@@ -50,6 +50,7 @@
         "static": "./vendor/bin/phpstan --memory-limit=-1",
         "tests": [
             "@php tests/Support/bin/yii migrate --interactive=0",
+            "codecept build",
             "codecept run"
         ],
         "serve": [

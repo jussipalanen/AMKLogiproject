@@ -5,59 +5,45 @@ declare(strict_types=1);
 namespace app\tests\Unit\Models;
 
 use app\models\LoginForm;
+use app\tests\Support\Factory;
 use Yii;
-use yii\base\Security;
 
 final class LoginFormTest extends \Codeception\Test\Unit
 {
-    private $_model;
-
-    protected function _after()
+    protected function _after(): void
     {
         Yii::$app->user->logout();
     }
 
-    public function testLoginNoUser()
+    public function testLoginNoUser(): void
     {
-        $this->_model = new LoginForm(
-            new Security(),
-            [
-                'username' => 'not_existing_username',
-                'password' => 'not_existing_password',
-            ],
-        );
+        $model = new LoginForm(['username' => 'not_existing_username', 'password' => 'not_existing_password']);
 
-        verify($this->_model->login())->false();
+        verify($model->login())->false();
         verify(Yii::$app->user->isGuest)->true();
     }
 
-    public function testLoginWrongPassword()
+    public function testLoginWrongPassword(): void
     {
-        $this->_model = new LoginForm(
-            new Security(),
-            [
-                'username' => 'demo',
-                'password' => 'wrong_password',
-            ],
-        );
+        Factory::user('matti');
+        $model = new LoginForm(['username' => 'matti', 'password' => 'wrong_password']);
 
-        verify($this->_model->login())->false();
+        verify($model->login())->false();
         verify(Yii::$app->user->isGuest)->true();
-        verify($this->_model->errors)->arrayHasKey('password');
+        verify($model->errors)->arrayHasKey('password');
     }
 
-    public function testLoginCorrect()
+    public function testLoginCorrectUpdatesLastLogin(): void
     {
-        $this->_model = new LoginForm(
-            new Security(),
-            [
-                'username' => 'demo',
-                'password' => 'demo',
-            ],
-        );
+        $user = Factory::user('matti');
+        $model = new LoginForm(['username' => 'matti', 'password' => Factory::PASSWORD]);
 
-        verify($this->_model->login())->true();
+        verify($model->login())->true();
         verify(Yii::$app->user->isGuest)->false();
-        verify($this->_model->errors)->arrayHasNotKey('password');
+        verify(Yii::$app->user->id)->equals($user->id);
+        verify($model->errors)->arrayHasNotKey('password');
+
+        $user->refresh();
+        verify($user->last_login_at)->notNull();
     }
 }
