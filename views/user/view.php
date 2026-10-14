@@ -101,16 +101,19 @@ $details = array_filter([
                         'id' => 'comment-form',
                         'action' => ['/comment/create', 'username' => $user->username],
                         'options' => ['data-comment-form' => true],
-                        // web/js/comments.js handles submit; yii.activeForm would submit the page itself.
-                        'enableClientValidation' => false,
+                        // web/js/comments.js sends the form. Without this, yii.activeForm's own submit
+                        // handler also posts the (by then cleared) form and reloads the page.
+                        'enableClientScript' => false,
                     ]) ?>
                         <?= $form->field($newComment, 'body')
                             ->textarea([
                                 'rows' => 2,
                                 'maxlength' => Comment::MAX_LENGTH,
                                 'placeholder' => 'Kirjoita kommentti…',
+                                'aria-describedby' => 'comment-hint',
                             ])
-                            ->label(false) ?>
+                            ->label(false)
+                            ->hint('Enter lähettää, Shift + Enter tekee rivinvaihdon.', ['id' => 'comment-hint']) ?>
                         <div class="d-flex flex-wrap align-items-center gap-3">
                             <?= Html::submitButton('Kommentoi', ['class' => 'btn btn-primary']) ?>
                             <?= $form->field($newComment, 'is_private', ['options' => ['class' => 'mb-0']])

@@ -1,6 +1,7 @@
 /*
  * Sends wall comments without reloading the page (the original app did this with
- * jQuery $.ajax). Without JavaScript the form still works as a normal POST.
+ * jQuery $.ajax). Enter sends, Shift+Enter adds a line break. Without JavaScript
+ * the form still works as a normal POST.
  */
 (() => {
     'use strict'
@@ -13,14 +14,32 @@
         const status = form.querySelector('[data-comment-status]')
         const button = form.querySelector('button[type="submit"]')
         const textarea = form.querySelector('textarea')
+        let sending = false
 
         const showStatus = message => {
             status.textContent = message
             status.hidden = message === ''
         }
 
+        textarea.addEventListener('keydown', event => {
+            // isComposing: don't send while an IME is still composing a character
+            if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+                event.preventDefault()
+                form.requestSubmit()
+            }
+        })
+
         form.addEventListener('submit', async event => {
             event.preventDefault()
+            if (sending) return
+
+            if (textarea.value.trim() === '') {
+                showStatus('Kommentti ei voi olla tyhjä.')
+                textarea.focus()
+                return
+            }
+
+            sending = true
             button.disabled = true
             showStatus('Lähetetään kommenttia…')
 
@@ -43,10 +62,11 @@
                 list.innerHTML = data.html
                 form.reset()
                 showStatus('')
-                list.lastElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+                list.querySelector('.comment:last-child')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
             } catch (error) {
                 showStatus(error.message)
             } finally {
+                sending = false
                 button.disabled = false
                 textarea.focus()
             }
