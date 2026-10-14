@@ -1,0 +1,17 @@
+.git
+.idea
+.vscode
+nbproject
+.env
+vendor
+runtime/*
+!runtime/.gitignore
+web/assets/*
+!web/assets/.gitignore
+web/uploads/*
+!web/uploads/.gitignore
+tests/Support/output/*
+tests/Support/_generated
+tests/Support/*Tester.php
+docker-compose*.yml
+Dockerfile

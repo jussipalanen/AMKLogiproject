@@ -29,8 +29,8 @@ class AvatarForm extends Model
                 'skipOnEmpty' => false,
                 'extensions' => 'png, jpg, jpeg, gif, webp',
                 'maxSize' => 5 * 1024 * 1024,
-                'maxWidth' => 8000,
-                'maxHeight' => 8000,
+                'maxWidth' => 6000,
+                'maxHeight' => 6000,
             ],
         ];
     }
