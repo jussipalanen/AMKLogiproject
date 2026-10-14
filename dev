@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+#
+# AMKLogi development helper around Docker Compose.
+#
+#   ./dev            same as ./dev up
+#   ./dev help       list all commands
+#
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE=(docker compose)
+elif command -v docker-compose >/dev/null 2>&1; then
+    COMPOSE=(docker-compose)
+else
+    echo "dev: Docker Compose is not installed." >&2
+    exit 1
+fi
+
+# Same defaults as docker-compose.yml; a .env file can override them.
+if [[ -f .env ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    source .env
+    set +a
+fi
+APP_PORT="${APP_PORT:-8080}"
+MAILPIT_PORT="${MAILPIT_PORT:-8025}"
+
+compose() {
+    "${COMPOSE[@]}" "$@"
+}
+
+print_urls() {
+    cat <<EOF
+
+  AMKLogi   http://localhost:${APP_PORT}
+  Mailpit   http://localhost:${MAILPIT_PORT}
+  Demo      matti / liisa / admin, password demo1234 (when SEED_DEMO_DATA=true)
+
+EOF
+}
+
+wait_for_app() {
+    printf 'Waiting for the app'
+    for _ in $(seq 1 60); do
+        if curl -fs -o /dev/null "http://localhost:${APP_PORT}/"; then
+            echo ' ready.'
+            return 0
+        fi
+        printf '.'
+        sleep 2
+    done
+    echo
+    echo "The app did not answer in time, see: ./dev logs app" >&2
+    return 1
+}
+
+confirm() {
+    local answer
+    read -r -p "$1 [y/N] " answer
+    [[ "$answer" =~ ^[Yy]$ ]]
+}
+
+usage() {
+    cat <<EOF
+Usage: ./dev <command> [arguments]
+
+Containers
+  up                Build (if needed) and start everything in the background (default)
+  run               Build and start in the foreground with logs (Ctrl+C stops)
+  restart           Restart the containers
+  recreate          Rebuild the images and re-create the containers (data is kept)
+  down              Stop and remove the containers (data is kept)
+  reset             Like recreate, but also deletes the database and uploads
+  status            Show container status
+  logs [service]    Follow logs (app, db or mailpit)
+
+Application
+  shell             Open a shell in the app container (as www-data)
+  yii <args>        Run a Yii console command, e.g. ./dev yii migrate/history
+  migrate           Apply database migrations
+  seed              Create demo users if the database is empty
+  mysql             Open a MySQL client to the app database
+  test              Build the test image and run the test suite
+
+Settings come from docker-compose.yml and can be overridden in .env (see .env.example).
+EOF
+}
+
+command="${1:-up}"
+shift || true
+
+case "$command" in
+    up | start)
+        compose up -d --build
+        wait_for_app
+        print_urls
+        ;;
+    run)
+        print_urls
+        compose up --build
+        ;;
+    restart)
+        compose restart
+        wait_for_app
+        print_urls
+        ;;
+    recreate)
+        compose build --pull
+        compose up -d --force-recreate --remove-orphans
+        wait_for_app
+        print_urls
+        ;;
+    down | stop)
+        compose down --remove-orphans
+        ;;
+    reset)
+        if [[ "${1:-}" != "-y" ]] && ! confirm "This deletes the database, uploads and runtime data. Continue?"; then
+            echo "Cancelled."
+            exit 1
+        fi
+        compose down --volumes --remove-orphans
+        compose build --pull
+        compose up -d --force-recreate
+        wait_for_app
+        print_urls
+        ;;
+    status | ps)
+        compose ps
+        ;;
+    logs)
+        compose logs -f --tail=100 "$@"
+        ;;
+    shell)
+        compose exec app runuser -u www-data -- bash
+        ;;
+    yii)
+        compose exec app runuser -u www-data -- php yii "$@"
+        ;;
+    migrate)
+        compose exec app runuser -u www-data -- php yii migrate --interactive=0
+        ;;
+    seed)
+        compose exec app runuser -u www-data -- php yii seed
+        ;;
+    mysql)
+        compose exec db sh -c 'mysql --default-character-set=utf8mb4 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"'
+        ;;
+    test | tests)
+        compose --profile test build tests
+        compose --profile test run --rm tests
+        ;;
+    help | -h | --help)
+        usage
+        ;;
+    *)
+        echo "Unknown command: $command" >&2
+        echo >&2
+        usage >&2
+        exit 1
+        ;;
+esac
