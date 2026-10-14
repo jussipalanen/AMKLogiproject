@@ -59,6 +59,8 @@ $details = array_filter([
                 <h2 class="amk-box-title" id="actions-title">Toiminnot</h2>
                 <ul class="amk-actions">
                     <li><?= Html::a('Lataa profiilikuva', ['/profile/update', '#' => 'avatar-form']) ?></li>
+                    <li><?= Html::a('Lataa kuvia albumiin', ['/image/upload']) ?></li>
+                    <li><?= Html::a('Omat albumit', ['/album/index', 'username' => $user->username]) ?></li>
                     <li><?= Html::a('Muokkaa profiilia', ['/profile/update']) ?></li>
                 </ul>
             </div>
@@ -67,15 +69,7 @@ $details = array_filter([
 <?php $this->endBlock() ?>
 
 <article class="amk-box user-view">
-    <nav aria-label="Profiilin valikko">
-        <ul class="amk-subnav">
-            <li><?= Html::a('Profiili', ['/user/view', 'username' => $user->username], ['aria-current' => 'page']) ?></li>
-            <li><?= Html::a('Kommentit', '#comments') ?></li>
-            <?php if ($isOwner): ?>
-                <li><?= Html::a('Asetukset', ['/profile/update']) ?></li>
-            <?php endif ?>
-        </ul>
-    </nav>
+    <?= $this->render('_subnav', ['user' => $user, 'active' => 'profile']) ?>
 
     <div class="amk-box-body">
         <h1 class="amk-box-title"><?= Html::encode($user->username) ?></h1>

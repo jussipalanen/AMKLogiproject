@@ -46,12 +46,7 @@ $this->title = 'Muokkaa profiilia';
 <?php $this->endBlock() ?>
 
 <article class="amk-box profile-update">
-    <nav aria-label="Profiilin valikko">
-        <ul class="amk-subnav">
-            <li><?= Html::a('Profiili', ['/user/view', 'username' => $user->username]) ?></li>
-            <li><?= Html::a('Asetukset', ['/profile/update'], ['aria-current' => 'page']) ?></li>
-        </ul>
-    </nav>
+    <?= $this->render('/user/_subnav', ['user' => $user, 'active' => 'settings']) ?>
     <div class="amk-box-body">
         <h1 class="amk-box-title"><?= Html::encode($this->title) ?></h1>
         <p class="text-body-secondary">Kaikki kentät ovat vapaaehtoisia ja näkyvät profiilisivullasi.</p>

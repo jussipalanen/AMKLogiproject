@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace app\models;
 
 use Yii;
+use app\components\ImageResizer;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\FileHelper;
 
 /**
  * Profile details shown on a user's page.
@@ -103,6 +105,38 @@ class Profile extends ActiveRecord
     public function getGenderLabel(): ?string
     {
         return self::GENDERS[$this->gender] ?? null;
+    }
+
+    /**
+     * Makes a copy of $sourcePath the profile picture: scaled to params['avatarMaxSize'] and
+     * re-encoded as JPEG, or copied as-is without GD. The previous picture file is removed.
+     * Used for uploads and for album images ("Aseta profiilikuvaksi").
+     */
+    public function replaceAvatar(string $sourcePath, string $extension): bool
+    {
+        $directory = (string) $this->user_id;
+        FileHelper::createDirectory(Yii::getAlias("@uploads/$directory"));
+
+        $name = Yii::$app->security->generateRandomString(16);
+        $relativePath = "$directory/$name.jpg";
+
+        if (ImageResizer::toJpeg($sourcePath, Yii::getAlias("@uploads/$relativePath"), Yii::$app->params['avatarMaxSize']) === null) {
+            $relativePath = "$directory/$name." . strtolower($extension);
+
+            if (!copy($sourcePath, Yii::getAlias("@uploads/$relativePath"))) {
+                return false;
+            }
+        }
+
+        $previous = $this->avatar_path;
+        $this->avatar_path = $relativePath;
+        $this->save(false, ['avatar_path', 'updated_at']);
+
+        if ($previous !== null && is_file(Yii::getAlias("@uploads/$previous"))) {
+            unlink(Yii::getAlias("@uploads/$previous"));
+        }
+
+        return true;
     }
 
     public function getAvatarUrl(): ?string

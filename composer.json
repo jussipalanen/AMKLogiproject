@@ -56,7 +56,7 @@
         "serve": [
             "Composer\\Config::disableProcessTimeout",
             "@php yii migrate --interactive=0",
-            "@php yii serve --docroot=web"
+            "@php -d upload_max_filesize=6M -d post_max_size=105M -d max_file_uploads=20 -S localhost:8080 -t web"
         ]
     },
     "extra": {

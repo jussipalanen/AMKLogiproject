@@ -49,7 +49,8 @@ $identity = Yii::$app->user->identity;
                 </p>
                 <p class="mb-3">Mitä haluat tehdä?</p>
                 <ul class="amk-actions">
-                    <li><?= Html::a('Lisää kuva', ['/profile/update']) ?></li>
+                    <li><?= Html::a('Lisää kuvia', ['/image/upload']) ?></li>
+                    <li><?= Html::a('Omat albumit', ['/album/index', 'username' => $identity->username]) ?></li>
                     <li><?= Html::a('Muokkaa profiilia', ['/profile/update']) ?></li>
                     <li><?= Html::a('Kirjaudu ulos', ['/site/logout'], ['data-method' => 'post']) ?></li>
                 </ul>

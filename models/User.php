@@ -38,9 +38,9 @@ class User extends ActiveRecord implements IdentityInterface
 
     /** Usernames that would collide with application routes. */
     public const RESERVED_USERNAMES = [
-        'about', 'admin', 'assets', 'comment', 'comments', 'contact', 'css', 'debug', 'gii',
-        'index', 'js', 'login', 'logout', 'profile', 'register', 'signup', 'site', 'uploads',
-        'user', 'users',
+        'about', 'admin', 'album', 'albums', 'assets', 'comment', 'comments', 'contact', 'css',
+        'debug', 'gii', 'image', 'images', 'index', 'js', 'login', 'logout', 'profile', 'register',
+        'signup', 'site', 'uploads', 'user', 'users',
     ];
 
     public static function tableName(): string
