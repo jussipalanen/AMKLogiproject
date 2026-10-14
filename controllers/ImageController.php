@@ -245,10 +245,18 @@ class ImageController extends Controller
     {
         $url = (string) $this->request->post('returnUrl', '');
 
-        if (str_starts_with($url, '/') && !str_starts_with($url, '//') && !str_contains($url, '\\')) {
-            return $this->redirect($url);
-        }
+        return self::isLocalPath($url)
+            ? $this->redirect($url)
+            : $this->redirect(['album/index', 'username' => $this->viewer()->username]);
+    }
 
-        return $this->redirect(['album/index', 'username' => $this->viewer()->username]);
+    /**
+     * Whether $url is a path on this site, safe to redirect to: no "//host", no backslashes and
+     * no whitespace or control characters (browsers drop tabs/newlines, so "/\t/evil.example"
+     * would turn into "//evil.example").
+     */
+    public static function isLocalPath(string $url): bool
+    {
+        return preg_match('~^/(?:[^/\\\\\s\x00-\x1f][^\\\\\s\x00-\x1f]*)?$~', $url) === 1;
     }
 }

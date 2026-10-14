@@ -13,7 +13,8 @@ services:
       target: app
     image: amklogi:latest
     ports:
-      - "${APP_PORT:-8080}:80"
+      # Only this machine by default; set APP_BIND=0.0.0.0 to expose it (e.g. behind a proxy).
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8080}:80"
     environment:
       YII_ENV: ${YII_ENV:-prod}
       YII_DEBUG: ${YII_DEBUG:-0}
@@ -57,7 +58,7 @@ services:
   mailpit:
     image: axllent/mailpit:v1.31
     ports:
-      - "${MAILPIT_PORT:-8025}:8025"
+      - "${MAILPIT_BIND:-127.0.0.1}:${MAILPIT_PORT:-8025}:8025"
     restart: unless-stopped
 
   tests:

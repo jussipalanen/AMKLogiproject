@@ -132,6 +132,7 @@ Docker Compose lukee arvot `.env`-tiedostosta. Kopioi `.env.example` → `.env` 
 |---|---|---|
 | `APP_PORT` | `8080` | Sovelluksen portti |
 | `MAILPIT_PORT` | `8025` | Mailpitin selainkäyttöliittymän portti |
+| `APP_BIND` / `MAILPIT_BIND` | `127.0.0.1` | Verkkoliitäntä, jossa portit näkyvät. Oletuksena vain oma kone; palvelimella `0.0.0.0` (HTTPS-välityspalvelimen takana). |
 | `YII_ENV` | `prod` (Docker) / `dev` (paikallinen) | Yii-ympäristö. `dev` ottaa käyttöön debug-palkin ja Giin. |
 | `YII_DEBUG` | `0` (Docker) / `1` (paikallinen) | Virheiden yksityiskohtainen näyttö |
 | `DB_DSN` | SQLite: `runtime/amklogi.sqlite` | Tietokantayhteys, esim. `mysql:host=db;dbname=amklogi` |
